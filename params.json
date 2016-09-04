@@ -1,0 +1,6 @@
+{
+  "name": "MVRE",
+  "tagline": "A mobile virtual reality game engine based on WebGL and WebVR",
+  "body": "# MVRE\r\n\r\n## Introduction\r\nMVRE is a mobile virtual reality game engine built on top of WebGL and WebVR. Its purpose as of now is to show the extent to which the WebVR spec and WebGL 2.0 have matured, and to serve as an intermediate introduction for those looking to develop web-based VR games. Although the focus is on mobile, any game produced using this engine is (unless directly stated) playable on any desktop VR device.\r\n\r\n## Status\r\nThis engine is currently in the planning and introductory development phase. Over time, this status will be updated to reflect the current state of the project. As the project matures, examples will be provided on how to implement various features as I learn how to develop them.\r\n\r\n## Planned Features\r\n* To be announced\r\n\r\n## Completed Features\r\n* None\r\n\r\n## Notes\r\nGame engine development is hard but rewarding. Never let the difficulty of a project be a roadblock that turns you away.",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
