@@ -4,7 +4,7 @@
 define(["scene"],function (SceneNode){
 
     this.init = function(gl){
-        var root = new SceneNode(gl);
+        var root = new SceneNode();
         root.name = "root";
 
         root.build(gl);

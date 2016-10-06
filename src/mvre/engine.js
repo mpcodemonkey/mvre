@@ -31,13 +31,13 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene'], function (glma
     var WebVRConfig = {
         // Polyfill optimizations
         DIRTY_SUBMIT_FRAME_BINDINGS: true,
-        BUFFER_SCALE: 0.5,
-        FORCE_ENABLE_VR: false
+        BUFFER_SCALE: 0.75,
     };
 
     //End sample polyfill enabling logic
 
     var vrDisplay = null;
+    var frameData = null;
     var projectionMat = glmatrix.mat4.create();
     var viewMat = glmatrix.mat4.create();
 
@@ -117,29 +117,25 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene'], function (glma
     }
 
     if (navigator.getVRDisplays) {
+        frameData = new VRFrameData();
         navigator.getVRDisplays().then(function (displays) {
             if (displays.length > 0) {
                 vrDisplay = displays[0];
-
-                // It's heighly reccommended that you set the near and far planes to
-                // something appropriate for your scene so the projection matricies
+                // It's highly recommended that you set the near and far planes to
+                // something appropriate for your scene so the projection matrices
                 // WebVR produces have a well scaled depth buffer.
                 vrDisplay.depthNear = 0.1;
                 vrDisplay.depthFar = 1024.0;
-
                 VRSamplesUtil.addButton("Reset Pose", "R", null, function () { vrDisplay.resetPose(); });
-
                 // Generally, you want to wait until VR support is confirmed and
                 // you know the user has a VRDisplay capable of presenting connected
                 // before adding UI that advertises VR features.
                 if (vrDisplay.capabilities.canPresent)
                     vrPresentButton = VRSamplesUtil.addButton("Enter VR", "E", "/third-party/media/icons/cardboard64.png", onVRRequestPresent);
-
                 // The UA may kick us out of VR present mode for any reason, so to
                 // ensure we always know when we begin/end presenting we need to
                 // listen for vrdisplaypresentchange events.
                 window.addEventListener('vrdisplaypresentchange', onVRPresentChange, false);
-
                 // These events fire when the user agent has had some indication that
                 // it would be appropariate to enter or exit VR presentation mode, such
                 // as the user putting on a headset and triggering a proximity sensor.
@@ -182,13 +178,9 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene'], function (glma
     window.addEventListener("resize", onResize, false);
     onResize();
 
-    var frameData = new VRFrameData();
-
     //initialize game setup
     scenegraph = init(gl);
 
-    function render(){
-    }
 
     /**
      * Render loop for engine
@@ -211,18 +203,17 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene'], function (glma
             // retrieving the pose. Do any work for the frame that doesn't need
             // to know the pose earlier to ensure the lowest latency possible.
             //var pose = vrDisplay.getPose();
-            //vrDisplay.getFrameData(frameData);
+            vrDisplay.getFrameData(frameData);
 
             if (vrDisplay.isPresenting) {
                 // When presenting render a stereo view.
                 gl.viewport(0, 0, webglCanvas.width * 0.5, webglCanvas.height);
                 // render scenegraph for left eye here
-                if(scenegraph)
-                    scenegraph.render(gl, projectionMat, viewMat, vrDisplay.getEyeParameters("Left"));
+                scenegraph.render(gl, frameData.leftProjectionMatrix, frameData.leftViewMatrix);
 
                 gl.viewport(webglCanvas.width * 0.5, 0, webglCanvas.width * 0.5, webglCanvas.height);
                 // render scenegraph for right eye here
-                //root.render(gl, projectionMat, viewMat, vrDisplay.getEyeParameters("Right"));
+                scenegraph.render(gl, frameData.rightProjectionMatrix, frameData.rightViewMatrix);
 
                 // If we're currently presenting to the VRDisplay we need to
                 // explicitly indicate we're done rendering.
@@ -232,14 +223,20 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene'], function (glma
                 // account.
                 gl.viewport(0, 0, webglCanvas.width, webglCanvas.height);
                 // It's best to use our own projection matrix in this case, but we can use the left eye's view matrix
-                if(scenegraph != null)
-                    scenegraph.render(gl, projectionMat, viewMat, vrDisplay.getEyeParameters("Left"));
+                glmatrix.mat4.perspective(projectionMat, Math.PI*0.4, webglCanvas.width / webglCanvas.height, 0.1, 1024.0);
+                scenegraph.render(gl, projectionMat, frameData.leftViewMatrix);
+                //console.log(frameData.leftViewMatrix.toString());
+                //console.log(projectionMat.toString());
+
             }
         } else {
             window.requestAnimationFrame(onAnimationFrame);
 
             // No VRDisplay found.
             gl.viewport(0, 0, webglCanvas.width, webglCanvas.height);
+            glmatrix.mat4.perspective(projectionMat, Math.PI*0.4, webglCanvas.width / webglCanvas.height, 0.1, 1024.0);
+            glmatrix.mat4.identity(viewMat);
+            scenegraph.render(gl, projectionMat, viewMat);
         }
     }
     window.requestAnimationFrame(onAnimationFrame);

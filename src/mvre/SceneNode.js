@@ -9,23 +9,37 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
         this.tMatrix = glmatrix.mat4.create();
         this.rMatrix = glmatrix.mat4.create();
         this.sMatrix = glmatrix.mat4.create();
-        this.vertices = new Float32Array([0.0, 0.5, 0.0,  -0.5, -0.5, 0.0, 0.5, -0.5, 0.0]);
+        this.vertices = new Float32Array([
+            -1.0, -1.0, -1.0, // 0. left-back
+            1.0, -1.0, -1.0, // 1. right-back
+            1.0, -1.0, 1.0, // 2. right-front
+            -1.0, -1.0, 1.0, // 3. left-front
+            0.0, 1.0, 0.0, // 4. top
+            ]);
+        this.indices = [4,2,3, 4,1,2, 4,0,1, 4,3,0, 0,1,3, 3,1,2];
         this.parent = null;
         this.children = [];
         this.program = null;
+        this.projectionMat = null;
+        this.modelViewMat = null;
 
 
         //create shaders
         this.VSHADER_SOURCE =
-            'attribute vec4 a_Position;\n' +
+            'uniform mat4 projectionMat;\n'+
+            'uniform mat4 modelViewMat;\n' +
+            'attribute vec3 a_Position;\n' +
             ' void main() {\n' +
-            ' gl_Position = a_Position;\n' +
+            //' gl_Position = projectionMat * modelViewMat * vec4(a_Position, 1.0);\n' +
+            ' gl_PointSize = 50.0;\n'+
+            //' gl_Position = projectionMat * modelViewMat * vec4(0.0,0.0,0.0,1.0);\n' +
+            ' gl_Position = vec4(0.0,0.0,0.0,1.0);\n' +
             '}\n';
 
         // Fragment shader program
         this.FSHADER_SOURCE =
             'void main() {\n' +
-            '  gl_FragColor = vec4(0.0, 0.0, 1.0, 1.0);\n' + // Set the point color
+            '  gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);\n' + // Set the point color
             '}\n';
 
 
@@ -68,15 +82,22 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
 
         SceneNode.prototype.build = function(gl){
             this.program = createProgram(gl, this.VSHADER_SOURCE, this.FSHADER_SOURCE);
-            var vertexBuffer = initVertexBuffer(gl);
+            var vertexBuffer = initBuffer(gl);
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, this.vertices, gl.STATIC_DRAW);
             var a_Position = gl.getAttribLocation(this.program, 'a_Position');
-            gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(a_Position);
+  //          gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0);
+    //        gl.enableVertexAttribArray(a_Position);
+
+            var indexBuffer = initBuffer(gl);
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), gl.STATIC_DRAW);
+
+            this.projectionMat = gl.getUniformLocation(this.program, "projectionMat");
+            this.modelViewMat = gl.getUniformLocation(this.program, "modelViewMat");
         }
 
-        SceneNode.prototype.render = function(gl, pMat, vMat, eyeParams) {
+        SceneNode.prototype.render = function(gl, pMat, vMat) {
 
             /**
              * This is where actual rendering will take
@@ -84,23 +105,25 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
              * of the rendering program attached to each
              * scenenode, so that when we render, we use
              * that program and can render immediately
-             * without performing an costly logic
+             * without performing any costly logic
              */
 
 
 
             if(!this.isLeaf()){
                 for(i = 0; i < this.children.length; i++) {
-                    this.children[i].render(gl, pMat, vMat, eyeParams);
+                    this.children[i].render(gl, pMat, vMat);
                 }
             }
 
             gl.useProgram(this.program);
 
-            gl.clearColor(0.5, 0.0, 0.5, 1.0);
-            gl.clear(gl.COLOR_BUFFER_BIT);
-            gl.drawArrays(gl.TRIANGLES, 0, 3);
+            gl.uniformMatrix4fv(this.projectionMat, false, pMat);
+            gl.uniformMatrix4fv(this.modelViewMat, false, vMat);
 
+
+            //gl.drawElements(gl.TRIANGLES, 18, gl.UNSIGNED_SHORT, 0);
+            gl.drawArrays(gl.POINTS, 0, 1);
         }
     };
 });

@@ -95,7 +95,7 @@ function loadShader(gl, type, source) {
   return shader;
 }
 
-function initVertexBuffer(gl) {
+function initBuffer(gl) {
   // Create a buffer object
   var vertexBuffer = gl.createBuffer();
   if (!vertexBuffer) {
