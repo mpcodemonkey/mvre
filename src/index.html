@@ -1,0 +1,50 @@
+<!--
+Copyright 2016 The Chromium Authors. All rights reserved.
+Use of this source code is governed by a BSD-style license that can be
+found in the LICENSE file.
+-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+
+        <title>03 - VR Presentation</title>
+
+        <!--
+          This sample demonstrates how to present the contents of a WebGL canvas to
+          a VRDisplay. The content is not mirrored on the main display while being
+          presented.
+        -->
+
+        <style>
+            #webgl-canvas, #presenting-message {
+                box-sizing: border-box;
+                height: 100%;
+                left: 0;
+                margin: 0;
+                position: absolute;
+                top: 0;
+                width: 100%;
+            }
+            #presenting-message {
+                color: white;
+                font-family: sans-serif;
+                font-size: 2em;
+                font-weight: bold;
+                z-index: 1;
+                text-align: center;
+                padding: 0.5em;
+                background-color: #444;
+                display: none;
+            }
+        </style>
+    </head>
+
+    <!-- hide this -->
+    <body>
+        <canvas id="webgl-canvas" ></canvas>
+    </body>
+    <script data-main="main" src="third-party/require-2.3.1-min.js"></script>
+</html>
