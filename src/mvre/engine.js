@@ -225,8 +225,8 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene'], function (glma
                 // It's best to use our own projection matrix in this case, but we can use the left eye's view matrix
                 glmatrix.mat4.perspective(projectionMat, Math.PI*0.4, webglCanvas.width / webglCanvas.height, 0.1, 1024.0);
                 scenegraph.render(gl, projectionMat, frameData.leftViewMatrix);
-                //console.log(frameData.leftViewMatrix.toString());
-                //console.log(projectionMat.toString());
+                console.log(frameData.leftViewMatrix.toString());
+                console.log(projectionMat.toString());
 
             }
         } else {

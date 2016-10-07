@@ -31,9 +31,9 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
             'attribute vec3 a_Position;\n' +
             ' void main() {\n' +
             //' gl_Position = projectionMat * modelViewMat * vec4(a_Position, 1.0);\n' +
-            ' gl_PointSize = 50.0;\n'+
+            //' gl_PointSize = 50.0;\n'+
             //' gl_Position = projectionMat * modelViewMat * vec4(0.0,0.0,0.0,1.0);\n' +
-            ' gl_Position = vec4(0.0,0.0,0.0,1.0);\n' +
+            ' gl_Position = vec4(a_Position, 1.0);\n' +
             '}\n';
 
         // Fragment shader program
@@ -86,8 +86,8 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, this.vertices, gl.STATIC_DRAW);
             var a_Position = gl.getAttribLocation(this.program, 'a_Position');
-  //          gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0);
-    //        gl.enableVertexAttribArray(a_Position);
+            gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(a_Position);
 
             var indexBuffer = initBuffer(gl);
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -122,8 +122,8 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
             gl.uniformMatrix4fv(this.modelViewMat, false, vMat);
 
 
-            //gl.drawElements(gl.TRIANGLES, 18, gl.UNSIGNED_SHORT, 0);
-            gl.drawArrays(gl.POINTS, 0, 1);
+            gl.drawElements(gl.TRIANGLES, 18, gl.UNSIGNED_SHORT, 0);
+            //gl.drawArrays(gl.POINTS, 0, 1);
         }
     };
 });
