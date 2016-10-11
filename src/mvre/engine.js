@@ -30,6 +30,7 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene'], function (glma
      everything will work the way you want it to by default. */
     var WebVRConfig = {
         // Polyfill optimizations
+        DEFER_INITIALIZATION: true,
         DIRTY_SUBMIT_FRAME_BINDINGS: true,
         BUFFER_SCALE: 0.75,
     };
@@ -121,11 +122,13 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene'], function (glma
         navigator.getVRDisplays().then(function (displays) {
             if (displays.length > 0) {
                 vrDisplay = displays[0];
+
                 // It's highly recommended that you set the near and far planes to
                 // something appropriate for your scene so the projection matrices
                 // WebVR produces have a well scaled depth buffer.
                 vrDisplay.depthNear = 0.1;
                 vrDisplay.depthFar = 1024.0;
+
                 VRSamplesUtil.addButton("Reset Pose", "R", null, function () { vrDisplay.resetPose(); });
                 // Generally, you want to wait until VR support is confirmed and
                 // you know the user has a VRDisplay capable of presenting connected
@@ -137,7 +140,7 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene'], function (glma
                 // listen for vrdisplaypresentchange events.
                 window.addEventListener('vrdisplaypresentchange', onVRPresentChange, false);
                 // These events fire when the user agent has had some indication that
-                // it would be appropariate to enter or exit VR presentation mode, such
+                // it would be appropriate to enter or exit VR presentation mode, such
                 // as the user putting on a headset and triggering a proximity sensor.
                 // You can inspect the `reason` property of the event to learn why the
                 // event was fired, but in this case we're going to always trust the
