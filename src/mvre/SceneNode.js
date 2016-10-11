@@ -23,6 +23,9 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
         this.projectionMat = null;
         this.modelViewMat = null;
         this.transMat = null;
+        this.vertexBuffer = null;
+        this.indexBuffer = null;
+        this.indexCount = 0;
 
 
         //create shaders
@@ -93,22 +96,22 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
 
         SceneNode.prototype.build = function(gl){
             this.program = createProgram(gl, this.VSHADER_SOURCE, this.FSHADER_SOURCE);
-            var vertexBuffer = initBuffer(gl);
-            gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+            this.vertexBuffer = initBuffer(gl);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, this.vertices, gl.STATIC_DRAW);
-            var a_Position = gl.getAttribLocation(this.program, 'a_Position');
-            gl.vertexAttribPointer(a_Position, 3, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(a_Position);
+            this.position = gl.getAttribLocation(this.program, 'a_Position');
+            gl.vertexAttribPointer(this.vertexBuffer, 3, gl.FLOAT, false, 0, 0);
 
-            var indexBuffer = initBuffer(gl);
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+            this.indexBuffer = initBuffer(gl);
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
             gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), gl.STATIC_DRAW);
 
             this.projectionMat = gl.getUniformLocation(this.program, "projectionMat");
             this.modelViewMat = gl.getUniformLocation(this.program, "modelViewMat");
             this.transMat = gl.getUniformLocation(this.program, "transMat");
 
-            //this.translate(1.0,0.0,-1.0);
+            this.indexCount = this.indices.length;
+            this.translate(1.0,0.0,-1.0);
         }
 
         SceneNode.prototype.render = function(gl, pMat, vMat) {
@@ -131,15 +134,18 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
             }
 
             gl.useProgram(this.program);
-            //gl.frontFace(gl.CW);
+            gl.frontFace(gl.CW);
 
             gl.uniformMatrix4fv(this.projectionMat, false, pMat);
             gl.uniformMatrix4fv(this.modelViewMat, false, vMat);
             gl.uniformMatrix4fv(this.transMat, false, this.tMatrix);
 
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+            gl.enableVertexAttribArray(this.position);
+            gl.vertexAttribPointer(this.vertexBuffer, 3, gl.FLOAT, false, 0, 0);
 
-            gl.drawElements(gl.TRIANGLES, 18, gl.UNSIGNED_SHORT, 0);
-            //gl.drawArrays(gl.POINTS, 0, 1);
+            gl.drawElements(gl.TRIANGLES, this.indexCount, gl.UNSIGNED_SHORT, 0);
         }
     };
 });
