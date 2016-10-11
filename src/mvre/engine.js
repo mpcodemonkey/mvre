@@ -54,7 +54,11 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene'], function (glma
         alpha: false,
         antialias: VRSamplesUtil.isMobile(),
     };
-    var gl = webglCanvas.getContext("webgl", glAttribs);
+    var gl = null;
+    gl = webglCanvas.getContext( 'webgl2', glAttribs );
+    if (!gl) {
+        gl = webglCanvas.getContext( 'experimental-webgl2', glAttribs );
+    }
     gl.clearColor(0.1, 0.2, 0.3, 1.0);
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.CULL_FACE);

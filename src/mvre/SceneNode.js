@@ -16,36 +16,47 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
             -0.5, -0.5, 0.5, // 3. left-front
             0.0, 0.5, 0.0, // 4. top
             ]);
-        this.indices = [4,2,3, 4,1,2, 4,0,1, 4,3,0, 0,1,3, 3,1,2];
+        this.indices = [4,2,3, 4,1,2, 4,3,0, 4,0,1, 0,3,1, 3,2,1];
         this.parent = null;
         this.children = [];
         this.program = null;
         this.projectionMat = null;
         this.modelViewMat = null;
+        this.transMat = null;
 
 
         //create shaders
         this.VSHADER_SOURCE =
-            'uniform mat4 projectionMat;\n'+
-            'uniform mat4 modelViewMat;\n' +
-            'attribute vec3 a_Position;\n' +
-            ' void main() {\n' +
-            //' gl_Position = projectionMat * modelViewMat * vec4(a_Position, 1.0);\n' +
-            //' gl_PointSize = 50.0;\n'+
-            ' gl_Position = projectionMat * modelViewMat * vec4(a_Position, 1.0);\n' +
-            //' gl_Position = vec4(a_Position, 1.0);\n' +
-            '}\n';
+            [
+            '#version 300 es\n',
+            'precision mediump float;',
+            'in vec3 a_Position;',
+            'uniform mat4 projectionMat;',
+            'uniform mat4 modelViewMat;',
+            'uniform mat4 transMat;',
+            'out vec4 posBasedColor;',
+            ' void main() {',
+            'posBasedColor = vec4(a_Position, 1.0);',
+            ' gl_Position = projectionMat * modelViewMat * transMat * vec4(a_Position, 1.0);',
+            '}'
+            ].join("\n");
 
         // Fragment shader program
         this.FSHADER_SOURCE =
-            'void main() {\n' +
-            '  gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);\n' + // Set the point color
-            '}\n';
+            [
+            '#version 300 es\n',
+            'precision mediump float;',
+            'in vec4 posBasedColor;',
+            'out vec4 outColor;',
+            'void main() {',
+            '  outColor = posBasedColor;', // Set the point color
+            '}'
+            ].join("\n");
 
 
         SceneNode.prototype.translate = function (x, y, z) {
             var translateVector = glmatrix.vec3.fromValues(x, y, z);
-            mat4.translate(this.tMatrix, this.tMatrix, translateVector);
+            glmatrix.mat4.translate(this.tMatrix, this.tMatrix, translateVector);
         }
 
         SceneNode.prototype.rotate = function (axis, radians) {
@@ -95,6 +106,9 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
 
             this.projectionMat = gl.getUniformLocation(this.program, "projectionMat");
             this.modelViewMat = gl.getUniformLocation(this.program, "modelViewMat");
+            this.transMat = gl.getUniformLocation(this.program, "transMat");
+
+            //this.translate(1.0,0.0,-1.0);
         }
 
         SceneNode.prototype.render = function(gl, pMat, vMat) {
@@ -121,6 +135,7 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
 
             gl.uniformMatrix4fv(this.projectionMat, false, pMat);
             gl.uniformMatrix4fv(this.modelViewMat, false, vMat);
+            gl.uniformMatrix4fv(this.transMat, false, this.tMatrix);
 
 
             gl.drawElements(gl.TRIANGLES, 18, gl.UNSIGNED_SHORT, 0);
