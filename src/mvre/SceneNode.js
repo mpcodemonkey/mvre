@@ -26,6 +26,7 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
         this.vertexBuffer = null;
         this.indexBuffer = null;
         this.indexCount = 0;
+        this.curtim = 0;
 
 
         //create shaders
@@ -39,9 +40,9 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
             'uniform mat4 transMat;',
             'out vec4 posBasedColor;',
             ' void main() {',
-            'posBasedColor = vec4(a_Position, 1.0);',
-            ' gl_Position = projectionMat * modelViewMat * transMat * vec4(a_Position, 1.0);',
-            '}'
+            'posBasedColor = modelViewMat * transMat * vec4(a_Position, 1.0);',
+            ' gl_Position = projectionMat * posBasedColor;',
+                '}'
             ].join("\n");
 
         // Fragment shader program
@@ -52,7 +53,7 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
             'in vec4 posBasedColor;',
             'out vec4 outColor;',
             'void main() {',
-            '  outColor = posBasedColor;', // Set the point color
+            '  outColor = vec4(posBasedColor.x, posBasedColor.y, posBasedColor.z, 1.0);', // Set the point color
             '}'
             ].join("\n");
 
@@ -111,7 +112,6 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
             this.transMat = gl.getUniformLocation(this.program, "transMat");
 
             this.indexCount = this.indices.length;
-            this.translate(1.0,0.0,-1.0);
         }
 
         SceneNode.prototype.render = function(gl, pMat, vMat) {
@@ -132,6 +132,10 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
                     this.children[i].render(gl, pMat, vMat);
                 }
             }
+
+            glmatrix.mat4.identity(this.tMatrix);
+            this.translate(3*Math.sin(this.curtim/360),.2*Math.sin(this.curtim/45),3*Math.cos(this.curtim/360));
+            this.curtim++;
 
             gl.useProgram(this.program);
             gl.frontFace(gl.CW);
