@@ -9,6 +9,7 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
         this.tMatrix = glmatrix.mat4.create();
         this.rMatrix = glmatrix.mat4.create();
         this.sMatrix = glmatrix.mat4.create();
+        this.lMatrix = glmatrix.mat4.create();
         this.vertices = new Float32Array([
             -0.5, -0.5, -0.5, // 0. left-back
             0.5, -0.5, -0.5, // 1. right-back
@@ -41,7 +42,7 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
             glmatrix.mat4.translate(this.tMatrix, this.tMatrix, translateVector);
         }
 
-        SceneNode.prototype.rotate = function (axis, radians) {
+        SceneNode.prototype.rotate = function (radians, axis) {
             glmatrix.mat4.rotate(this.rMatrix, this.rMatrix, radians, axis);
         }
 
@@ -59,6 +60,16 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
 
         SceneNode.prototype.scale = function (x, y, z) {
             glmatrix.mat4.scale(this.sMatrix, this.sMatrix, vec3.fromValues(x, y, z))
+        }
+
+        SceneNode.prototype.computeLocalMatrix = function(){
+            var tmp = glmatrix.mat4.create();
+            glmatrix.mat4.mul(tmp, this.rMatrix, this.tMatrix);
+            glmatrix.mat4.mul(this.lMatrix, this.sMatrix, tmp);
+        }
+
+        SceneNode.prototype.getParentTransform = function(){
+            return this.parent === null ? glmatrix.mat4.create() : this.parent.lMatrix;
         }
 
         SceneNode.prototype.isLeaf = function () {

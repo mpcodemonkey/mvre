@@ -14,22 +14,23 @@ define(['glmatrix', 'scene'], function(glmatrix, scene) {
          **/
 
 
+        //compute the local transform matrix of the given node
+        node.computeLocalMatrix();
+
         if (!node.isLeaf()) {
             for (i = 0; i < node.children.length; i++) {
                 render(node.children[i], gl, pMat, vMat);
             }
         }
 
-        glmatrix.mat4.identity(node.tMatrix);
-        node.translate(3*Math.sin(node.curtim/360),.2*Math.sin(node.curtim/45),3*Math.cos(node.curtim/360));
-        node.curtim++;
+        glmatrix.mat4.mul(node.lMatrix, node.getParentTransform(), node.lMatrix);
 
         gl.useProgram(node.program);
         gl.frontFace(gl.CW);
 
         gl.uniformMatrix4fv(node.projectionMat, false, pMat);
         gl.uniformMatrix4fv(node.modelViewMat, false, vMat);
-        gl.uniformMatrix4fv(node.transMat, false, node.tMatrix);
+        gl.uniformMatrix4fv(node.transMat, false, node.lMatrix);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, node.vertexBuffer);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, node.indexBuffer);

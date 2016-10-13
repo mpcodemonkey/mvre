@@ -11,7 +11,7 @@ found in the LICENSE file.
  * we can now load all of the required objects and
  * functions from each external js file. this greatly
  * improves code readability, and allows for imports
- * to function more like java. You simple add a path to
+ * to function more like java. You simply add a path to
  * main.js where your scripts are located, and then they
  * become usable in the engine.
  */
@@ -198,8 +198,11 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene', 'renderer'],
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+        //call update in baseGame to compute new object positions, control logic, etc.
+        update();
 
         if (vrDisplay) {
+
             // When presenting content to the VRDisplay we want to update at its
             // refresh rate if it differs from the refresh rate of the main
             // display. Calling VRDisplay.requestAnimationFrame ensures we render
