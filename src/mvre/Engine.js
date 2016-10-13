@@ -16,7 +16,8 @@ found in the LICENSE file.
  * become usable in the engine.
  */
 
-define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene'], function (glmatrix, samples, polyfill, basegame, SceneNode) {
+define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene', 'renderer'],
+    function (glmatrix, samples, polyfill, basegame, SceneNode, renderer) {
 
     "use strict";
 
@@ -35,7 +36,7 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene'], function (glma
         BUFFER_SCALE: 0.75,
     };
 
-    //End sample polyfill enabling logic
+    //End polyfill enabling logic
 
     var vrDisplay = null;
     var frameData = null;
@@ -216,11 +217,11 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene'], function (glma
                 // When presenting render a stereo view.
                 gl.viewport(0, 0, webglCanvas.width * 0.5, webglCanvas.height);
                 // render scenegraph for left eye here
-                scenegraph.render(gl, frameData.leftProjectionMatrix, frameData.leftViewMatrix);
+                render(scenegraph, gl, frameData.leftProjectionMatrix, frameData.leftViewMatrix);
 
                 gl.viewport(webglCanvas.width * 0.5, 0, webglCanvas.width * 0.5, webglCanvas.height);
                 // render scenegraph for right eye here
-                scenegraph.render(gl, frameData.rightProjectionMatrix, frameData.rightViewMatrix);
+                render(scenegraph, gl, frameData.rightProjectionMatrix, frameData.rightViewMatrix);
 
                 // If we're currently presenting to the VRDisplay we need to
                 // explicitly indicate we're done rendering.
@@ -231,7 +232,7 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene'], function (glma
                 gl.viewport(0, 0, webglCanvas.width, webglCanvas.height);
                 // It's best to use our own projection matrix in this case, but we can use the left eye's view matrix
                 glmatrix.mat4.perspective(projectionMat, Math.PI*0.4, webglCanvas.width / webglCanvas.height, 0.1, 1024.0);
-                scenegraph.render(gl, projectionMat, frameData.leftViewMatrix);
+                render(scenegraph, gl, projectionMat, frameData.leftViewMatrix);
                 //console.log(frameData.leftViewMatrix.toString());
                 //console.log(projectionMat.toString());
 
@@ -243,7 +244,7 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene'], function (glma
             gl.viewport(0, 0, webglCanvas.width, webglCanvas.height);
             glmatrix.mat4.perspective(projectionMat, Math.PI*0.4, webglCanvas.width / webglCanvas.height, 0.1, 1024.0);
             glmatrix.mat4.identity(viewMat);
-            scenegraph.render(gl, projectionMat, viewMat);
+            render(scenegraph, gl, projectionMat, viewMat);
         }
     }
     window.requestAnimationFrame(onAnimationFrame);
