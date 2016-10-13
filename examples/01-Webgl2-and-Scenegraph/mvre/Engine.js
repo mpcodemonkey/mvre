@@ -108,7 +108,7 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene', 'renderer'],
                 // On devices with an external display the UA may not provide a way
                 // to exit VR presentation mode, so we should provide one ourselves.
                 VRSamplesUtil.removeButton(vrPresentButton);
-                vrPresentButton = VRSamplesUtil.addButton("Exit VR", "E", "/third-party/media/icons/cardboard64.png", onVRExitPresent);
+                vrPresentButton = VRSamplesUtil.addButton("Exit VR", "E", "../third-party/media/icons/cardboard64.png", onVRExitPresent);
             }
         } else {
             // If we have an external display take down the presenting message and
@@ -117,7 +117,7 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene', 'renderer'],
                 presentingMessage.style.display = "";
 
                 VRSamplesUtil.removeButton(vrPresentButton);
-                vrPresentButton = VRSamplesUtil.addButton("Enter VR", "E", "/third-party/media/icons/cardboard64.png", onVRRequestPresent);
+                vrPresentButton = VRSamplesUtil.addButton("Enter VR", "E", "../third-party/media/icons/cardboard64.png", onVRRequestPresent);
             }
         }
     }
@@ -139,7 +139,7 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene', 'renderer'],
                 // you know the user has a VRDisplay capable of presenting connected
                 // before adding UI that advertises VR features.
                 if (vrDisplay.capabilities.canPresent)
-                    vrPresentButton = VRSamplesUtil.addButton("Enter VR", "E", "/third-party/media/icons/cardboard64.png", onVRRequestPresent);
+                    vrPresentButton = VRSamplesUtil.addButton("Enter VR", "E", "../third-party/media/icons/cardboard64.png", onVRRequestPresent);
                 // The UA may kick us out of VR present mode for any reason, so to
                 // ensure we always know when we begin/end presenting we need to
                 // listen for vrdisplaypresentchange events.
