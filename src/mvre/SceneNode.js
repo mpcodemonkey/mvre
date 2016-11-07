@@ -59,6 +59,7 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
             20, 21, 22,     20, 22, 23,   // left
             ];
         this.textureCoords = [
+            //modified for different texture
             // Front
             0.0,  1.0,
             1.0,  1.0,
