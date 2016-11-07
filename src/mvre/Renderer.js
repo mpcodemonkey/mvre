@@ -36,12 +36,14 @@ define(['glmatrix', 'scene'], function(glmatrix, scene) {
             gl.uniformMatrix4fv(node.transMat, false, node.wMatrix);
 
             gl.bindBuffer(gl.ARRAY_BUFFER, node.vertexBuffer);
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, node.indexBuffer);
+            gl.vertexAttribPointer(node.vertexPosition, 3, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(node.vertexPosition);
-            gl.vertexAttribPointer(node.vertexBuffer, 3, gl.FLOAT, false, 0, 0);
-            gl.vertexAttribPointer(node.texturePosition, 2, gl.FLOAT, false, 0, 0);
 
             gl.bindBuffer(gl.ARRAY_BUFFER, node.textureBuffer);
+            gl.vertexAttribPointer(node.texturePosition, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(node.texturePosition);
+
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, node.indexBuffer);
 
             gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_2D, node.texture);

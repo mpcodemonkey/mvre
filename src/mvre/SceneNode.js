@@ -15,40 +15,40 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
         //default cube, modified from https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL
         this.vertices = [
             // Front face
-            -0.5, -0.5,  0.5,
-            0.5, -0.5,  0.5,
-            0.5,  0.5,  0.5,
-            -0.5,  0.5,  0.5,
+            -1.0, -1.0,  1.0,
+            1.0, -1.0,  1.0,
+            1.0,  1.0,  1.0,
+            -1.0,  1.0,  1.0,
 
             // Back face
-            -0.5, -0.5, -0.5,
-            -0.5,  0.5, -0.5,
-            0.5,  0.5, -0.5,
-            0.5, -0.5, -0.5,
+            -1.0, -1.0, -1.0,
+            -1.0,  1.0, -1.0,
+            1.0,  1.0, -1.0,
+            1.0, -1.0, -1.0,
 
             // Top face
-            -0.5,  0.5, -0.5,
-            -0.5,  0.5,  0.5,
-            0.5,  0.5,  0.5,
-            0.5,  0.5, -0.5,
+            -1.0,  1.0, -1.0,
+            -1.0,  1.0,  1.0,
+            1.0,  1.0,  1.0,
+            1.0,  1.0, -1.0,
 
             // Bottom face
-            -0.5, -0.5, -0.5,
-            0.5, -0.5, -0.5,
-            0.5, -0.5,  0.5,
-            -0.5, -0.5,  0.5,
+            -1.0, -1.0, -1.0,
+            1.0, -1.0, -1.0,
+            1.0, -1.0,  1.0,
+            -1.0, -1.0,  1.0,
 
             // Right face
-            0.5, -0.5, -0.5,
-            0.5,  0.5, -0.5,
-            0.5,  0.5,  0.5,
-            0.5, -0.5,  0.5,
+            1.0, -1.0, -1.0,
+            1.0,  1.0, -1.0,
+            1.0,  1.0,  1.0,
+            1.0, -1.0,  1.0,
 
             // Left face
-            -0.5, -0.5, -0.5,
-            -0.5, -0.5,  0.5,
-            -0.5,  0.5,  0.5,
-            -0.5,  0.5, -0.5
+            -1.0, -1.0, -1.0,
+            -1.0, -1.0,  1.0,
+            -1.0,  1.0,  1.0,
+            -1.0,  1.0, -1.0
         ];
         this.indices = [
             0,  1,  2,      0,  2,  3,    // front
@@ -59,37 +59,36 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
             20, 21, 22,     20, 22, 23,   // left
             ];
         this.textureCoords = [
-            //modified for different texture
             // Front
-            0.0,  1.0,
-            1.0,  1.0,
-            1.0,  0.0,
             0.0,  0.0,
+            1.0,  0.0,
+            1.0,  1.0,
+            0.0,  1.0,
             // Back
-            0.0,  1.0,
-            1.0,  1.0,
-            1.0,  0.0,
             0.0,  0.0,
+            1.0,  0.0,
+            1.0,  1.0,
+            0.0,  1.0,
             // Top
-            0.0,  1.0,
-            1.0,  1.0,
-            1.0,  0.0,
             0.0,  0.0,
+            1.0,  0.0,
+            1.0,  1.0,
+            0.0,  1.0,
             // Bottom
-            0.0,  1.0,
-            1.0,  1.0,
-            1.0,  0.0,
             0.0,  0.0,
+            1.0,  0.0,
+            1.0,  1.0,
+            0.0,  1.0,
             // Right
-            0.0,  1.0,
-            1.0,  1.0,
-            1.0,  0.0,
             0.0,  0.0,
+            1.0,  0.0,
+            1.0,  1.0,
+            0.0,  1.0,
             // Left
-            0.0,  1.0,
-            1.0,  1.0,
-            1.0,  0.0,
             0.0,  0.0,
+            1.0,  0.0,
+            1.0,  1.0,
+            0.0,  1.0
         ];
         this.texturePosition = null;
         this.texture = null;
@@ -213,8 +212,7 @@ define(['glmatrix', 'cuon'], function(glmatrix, cuon){
             this.texture = initTexture(gl, "mvre/media/images/default.jpg");
             this.textureBuffer = initBuffer(gl);
             gl.bindBuffer(gl.ARRAY_BUFFER, this.textureBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.textureCoords),
-                gl.STATIC_DRAW);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.textureCoords), gl.STATIC_DRAW);
             this.texturePosition = gl.getAttribLocation(this.program, "t_coord");
             gl.enableVertexAttribArray(this.texturePosition);
             gl.vertexAttribPointer(this.texturePosition, 2, gl.FLOAT, false, 0, 0);
