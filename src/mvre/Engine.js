@@ -200,6 +200,7 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene', 'renderer'],
 
         //call update in baseGame to compute new object positions, control logic, etc.
         update();
+        scenegraph.update(t);
 
         if (vrDisplay) {
 

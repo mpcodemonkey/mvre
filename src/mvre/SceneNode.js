@@ -3,7 +3,6 @@
  */
 
 define(['glmatrix', 'cuon'], function(glmatrix, cuon){
-//todo: refactor render code in separate renderer.js file
     return function SceneNode() {
         this.name = "";
         this.tMatrix = glmatrix.mat4.create();

@@ -1,10 +1,11 @@
 /**
  * Created by ubufu on 9/20/2016.
  */
-define(["scene", "glmatrix"],function (SceneNode, glmatrix){
+define(["Cube", "glmatrix", "TranslationController"],function (Cube, glmatrix, TranslationController){
 
     //globals(for demo only)
     var root = null;
+    var controller = null;
     var child = null;
     var child2 = null;
     /**
@@ -13,9 +14,10 @@ define(["scene", "glmatrix"],function (SceneNode, glmatrix){
      * @param gl
      */
     this.init = function(gl){
-        root = new SceneNode();
-        root.name = "root";
 
+
+        root = new Cube();
+        root.name = "root";
         root.VSHADER_SOURCE =
             [
                 '#version 300 es\n',
@@ -33,7 +35,6 @@ define(["scene", "glmatrix"],function (SceneNode, glmatrix){
                 't_coords = t_coord;',
                 '}'
             ].join("\n");
-
         root.FSHADER_SOURCE =
             [
                 '#version 300 es\n',
@@ -46,19 +47,23 @@ define(["scene", "glmatrix"],function (SceneNode, glmatrix){
                 '  outColor = texture(uSampler, vec2(t_coords.s, t_coords.t));', // Set the point color
                 '}'
             ].join("\n");
-
         root.build(gl);
 
-        child = new SceneNode();
+        controller = new TranslationController();
+        controller.name = "controller";
+        controller.setParent(root);
+
+        child = new Cube();
         child.name = "child";
 
         child.VSHADER_SOURCE = root.VSHADER_SOURCE;
 
+
         child.FSHADER_SOURCE = root.FSHADER_SOURCE;
         child.build(gl);
-        child.setParent(root);
+        child.setParent(controller);
 
-        child2 = new SceneNode();
+        child2 = new Cube();
         child2.name = "bill";
         child2.VSHADER_SOURCE = root.VSHADER_SOURCE;
 
@@ -73,7 +78,6 @@ define(["scene", "glmatrix"],function (SceneNode, glmatrix){
 
 
     this.update = function (){
-
 /*
         glmatrix.mat4.identity(child2.tMatrix);
         child2.translate(Math.sin(-child2.curtim/90), Math.sin(-child2.curtim/90),Math.sin(-child2.curtim/90));
@@ -93,14 +97,15 @@ define(["scene", "glmatrix"],function (SceneNode, glmatrix){
 
 
         glmatrix.mat4.identity(child.tMatrix);
-        child.translate(1.8*Math.sin(-child.curtim/90),Math.sin(child.curtim/45),1.8*Math.cos(-child.curtim/90));
+        child.translate(2,2,0);
+        //child.translate(1.8*Math.sin(-child.curtim/90),Math.sin(child.curtim/45),1.8*Math.cos(-child.curtim/90));
         child.curtim++;
 
         glmatrix.mat4.identity(child2.tMatrix);
-        child2.translate(0, 3*Math.sin(-child2.curtim/90) ,3*Math.cos(-child2.curtim/90));
-        child2.rotate(0.05, glmatrix.vec3.fromValues(0.0,1.0,0.0));
+        child2.translate(-2, 1, 0);
+        //child2.translate(0, 3*Math.sin(-child2.curtim/90) ,3*Math.cos(-child2.curtim/90));
+        //child2.rotate(0.05, glmatrix.vec3.fromValues(0.0,1.0,0.0));
         child2.curtim++;
-
 
     }
 });
