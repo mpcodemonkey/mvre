@@ -7,25 +7,22 @@ define('TranslationController', ['BaseController', 'glmatrix'], function(BaseCon
     var TranslationController = function () {
         BaseController.call(this);
 
-        this.defaultTranslationRate = .002;
-        this.defaultCycleTime = 12;
-        this.cycleDirection = 1;
+        this.defaultTranslationRate = .05
+        this.defaultCycleTime = 360;
     };
     TranslationController.prototype = Object.create(BaseController.prototype);
 
     TranslationController.prototype.update = function () {
-        this.totalTime += 0.1;
+        this.totalTime += this.defaultTranslationRate;
         var step = this.defaultTranslationRate * this.totalTime;
 
-        if (this.totalTime > this.defaultCycleTime) {
-            //invert direction of movement
-            this.cycleDirection = -this.cycleDirection;
+        if (this.totalTime == this.defaultCycleTime) {
+            //reset counter
             this.totalTime = 0.0;
         }
 
-        step *= this.cycleDirection;
-
-        this.translate(step, 0, 0);
+        glmatrix.mat4.identity(this.tMatrix);
+        this.translate(Math.sin(this.totalTime), 0, 0);
         //this.rotate(0.05, glmatrix.vec3.fromValues(0,1,0));
 
         BaseController.prototype.update.call(this);

@@ -18,6 +18,7 @@ define('Node',['glmatrix'], function(glmatrix){
 
         this.parent = null;
         this.children = [];
+        this.drawable = false;
     }
 
     Node.prototype.translate = function (x, y, z) {
@@ -87,6 +88,14 @@ define('Node',['glmatrix'], function(glmatrix){
         this.children.forEach(function(child) {
             child.update();
         });
+    }
+
+    Node.prototype.isDrawable = function(){
+        return this.drawable;
+    }
+
+    Node.prototype.setDrawable = function(b){
+        this.drawable = b;
     }
 
     return Node;

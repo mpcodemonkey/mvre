@@ -97,6 +97,7 @@ define('Cube',['Node'], function(Node) {
         this.indexCount = 0;
         this.curtim = 0;
         this.vertexPosition = 0;
+        this.imageSrc = "mvre/media/images/default.jpg";
 
         //create shaders
         this.VSHADER_SOURCE = "";
@@ -135,13 +136,17 @@ define('Cube',['Node'], function(Node) {
         this.transMat = gl.getUniformLocation(this.program, "transMat");
 
         //initialize texture
-        this.texture = initTexture(gl, "mvre/media/images/default.jpg");
+        this.texture = initTexture(gl, this.imageSrc);
         this.textureBuffer = initBuffer(gl);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.textureBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.textureCoords), gl.STATIC_DRAW);
         this.texturePosition = gl.getAttribLocation(this.program, "t_coord");
         gl.enableVertexAttribArray(this.texturePosition);
         gl.vertexAttribPointer(this.texturePosition, 2, gl.FLOAT, false, 0, 0);
+    }
+
+    Cube.prototype.setImageSrc = function(source){
+        this.imageSrc = source;
     }
 
     return Cube;

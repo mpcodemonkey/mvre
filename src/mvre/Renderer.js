@@ -1,7 +1,7 @@
 /**
  * Created by ubufu on 10/6/2016.
  */
-define(['glmatrix', 'scene', 'Cube'], function(glmatrix, scene, Cube) {
+define(['Skybox','glmatrix', 'scene', 'Cube'], function(Skybox, glmatrix, scene, Cube) {
 
     this.render = function (node, gl, pMat, vMat) {
         /**
@@ -17,12 +17,13 @@ define(['glmatrix', 'scene', 'Cube'], function(glmatrix, scene, Cube) {
         //check if we have a scenegraph
         if(node){
             if (!node.isLeaf()) {
-                for (i = 0; i < node.children.length; i++) {
-                    render(node.children[i], gl, pMat, vMat);
-                }
+                node.children.forEach(function (child){
+                   render(child, gl, pMat, vMat);
+                });
             }
 
             if(node instanceof Cube){
+
                 gl.useProgram(node.program);
                 gl.frontFace(gl.CCW);
 
@@ -44,7 +45,18 @@ define(['glmatrix', 'scene', 'Cube'], function(glmatrix, scene, Cube) {
                 gl.bindTexture(gl.TEXTURE_2D, node.texture);
                 gl.uniform1i(gl.getUniformLocation(node.program, "uSampler"), 0);
 
-                gl.drawElements(gl.TRIANGLES, node.indexCount, gl.UNSIGNED_SHORT, 0);
+                if(node instanceof Skybox){
+                    gl.disable(gl.DEPTH_TEST);
+                    gl.frontFace(gl.CW);
+                    gl.drawElements(gl.TRIANGLES, node.indexCount, gl.UNSIGNED_SHORT, 0);
+                    gl.enable(gl.DEPTH_TEST);
+                    gl.frontFace(gl.CCW);
+                }
+                else{
+                    gl.drawElements(gl.TRIANGLES, node.indexCount, gl.UNSIGNED_SHORT, 0);
+                }
+
+
             }
         }
 

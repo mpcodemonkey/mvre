@@ -1,13 +1,18 @@
 /**
  * Created by ubufu on 9/20/2016.
  */
-define(["Cube", "glmatrix", "TranslationController"],function (Cube, glmatrix, TranslationController){
+define(["Skybox", "Shaders", "Node", "Cube", "glmatrix", "TranslationController", "RotationController"],function (Skybox, Shaders, Node, Cube, glmatrix, TranslationController, RotationController){
 
     //globals(for demo only)
-    var root = null;
-    var controller = null;
-    var child = null;
-    var child2 = null;
+    var skybox
+    var system = null;
+    var sunRotator;
+    var sun = null;
+    var earthController = null;
+    var earth = null;
+    var earthGroup = null;
+    var child2Controller = null;
+    var moon = null;
     /**
      * This is where the initial Scenegraph and all control logic
      * for a given application must be written.
@@ -15,97 +20,70 @@ define(["Cube", "glmatrix", "TranslationController"],function (Cube, glmatrix, T
      */
     this.init = function(gl){
 
+        system = new Node();
+        system.name = "system";
+        system.translate(0,0,-4);
 
-        root = new Cube();
-        root.name = "root";
-        root.VSHADER_SOURCE =
-            [
-                '#version 300 es\n',
-                'precision mediump float;',
-                'in vec3 a_Position;',
-                'in vec2 t_coord;',
-                'uniform mat4 projectionMat;',
-                'uniform mat4 modelViewMat;',
-                'uniform mat4 transMat;',
-                'out vec4 posBasedColor;',
-                'out vec2 t_coords;',
-                ' void main() {',
-                'posBasedColor = modelViewMat * transMat * vec4(a_Position, 1.0);',
-                ' gl_Position = projectionMat * posBasedColor;',
-                't_coords = t_coord;',
-                '}'
-            ].join("\n");
-        root.FSHADER_SOURCE =
-            [
-                '#version 300 es\n',
-                'precision mediump float;',
-                'in vec4 posBasedColor;',
-                'in vec2 t_coords;',
-                'uniform sampler2D uSampler;',
-                'out vec4 outColor;',
-                'void main() {',
-                '  outColor = texture(uSampler, vec2(t_coords.s, t_coords.t));', // Set the point color
-                '}'
-            ].join("\n");
-        root.build(gl);
+        skybox = new Skybox();
+        skybox.name = "bawks";
+        skybox.setImageSrc("mvre/media/images/bucklebox.jpg");
+        skybox.VSHADER_SOURCE = prototype_vshader;
+        skybox.FSHADER_SOURCE = prototype_fshader;
+        skybox.build(gl);
+        skybox.setParent(system);
+        skybox.translate(0,0,4);
+        skybox.scale(2,2,2);
 
-        controller = new TranslationController();
-        controller.name = "controller";
-        controller.setParent(root);
+        sunRotator = new RotationController();
+        sunRotator.name = "sunRot";
+        sunRotator.setParent(system);
 
-        child = new Cube();
-        child.name = "child";
+        sun = new Cube();
+        sun.name = "sun";
+        sun.VSHADER_SOURCE = prototype_vshader;
+        sun.FSHADER_SOURCE = prototype_fshader;
+        sun.setImageSrc("mvre/media/images/chang.jpg");
+        sun.build(gl);
+        sun.setParent(sunRotator);
 
-        child.VSHADER_SOURCE = root.VSHADER_SOURCE;
+        earthController = new RotationController();
+        earthController.name = "childController";
+        earthController.setDefaultRotationRate(.005);
+        earthController.setParent(system);
 
+        earthGroup = new Node();
+        earthGroup.name = "Earth Group";
+        earthGroup.setParent(earthController);
+        earthGroup.translate(4,0,0);
 
-        child.FSHADER_SOURCE = root.FSHADER_SOURCE;
-        child.build(gl);
-        child.setParent(controller);
+        earth = new Cube();
+        earth.name = "child";
+        earth.VSHADER_SOURCE = sun.VSHADER_SOURCE;
+        earth.FSHADER_SOURCE = sun.FSHADER_SOURCE;
+        earth.build(gl);
+        earth.setParent(earthGroup);
+        earth.scale(0.7,0.7,0.7);
 
-        child2 = new Cube();
-        child2.name = "bill";
-        child2.VSHADER_SOURCE = root.VSHADER_SOURCE;
+        moon = new Cube();
+        moon.name = "bill";
+        moon.VSHADER_SOURCE = sun.VSHADER_SOURCE;
 
-        child2.FSHADER_SOURCE = root.FSHADER_SOURCE;
-        child2.build(gl);
-        child2.scale(.5,.5,.5);
-        child2.setParent(child);
+        moon.FSHADER_SOURCE = sun.FSHADER_SOURCE;
+        moon.setImageSrc("mvre/media/images/krovetz.jpg")
+        moon.build(gl);
+        moon.scale(.3,.3,.3);
+        moon.setParent(earthGroup);
 
-
-        return root;
+        return system;
     }
 
 
     this.update = function (){
-/*
-        glmatrix.mat4.identity(child2.tMatrix);
-        child2.translate(Math.sin(-child2.curtim/90), Math.sin(-child2.curtim/90),Math.sin(-child2.curtim/90));
-        child2.rotate(0.05, glmatrix.vec3.fromValues(1.0,1.0,1.0));
-        child2.curtim++;
 
-        glmatrix.mat4.identity(child.tMatrix);
-        child.translate(Math.sin(-child.curtim/90),Math.sin(child.curtim/45),Math.cos(-child.curtim/90));
-        child.curtim++;
-
-        glmatrix.mat4.identity(root.tMatrix);
-        root.translate(3*Math.sin(root.curtim/360),.2*Math.sin(root.curtim/45),3*Math.cos(root.curtim/360));
-        root.curtim++;
-*/
-        glmatrix.mat4.identity(root.tMatrix);
-        root.translate(0,0,-4);
-
-
-        glmatrix.mat4.identity(child.tMatrix);
-        child.translate(2,2,0);
-        //child.translate(1.8*Math.sin(-child.curtim/90),Math.sin(child.curtim/45),1.8*Math.cos(-child.curtim/90));
-        child.curtim++;
-
-        glmatrix.mat4.identity(child2.tMatrix);
-        child2.translate(-2, 1, 0);
-        //child2.translate(0, 3*Math.sin(-child2.curtim/90) ,3*Math.cos(-child2.curtim/90));
-        //child2.rotate(0.05, glmatrix.vec3.fromValues(0.0,1.0,0.0));
-        child2.curtim++;
+        glmatrix.mat4.identity(moon.tMatrix);
+        moon.translate(0, 3*Math.sin(-moon.curtim/90) ,3*Math.cos(-moon.curtim/90));
+        moon.rotate(0.05, glmatrix.vec3.fromValues(1.0,0.0,0.0));
+        moon.curtim++;
 
     }
 });
