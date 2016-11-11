@@ -11,12 +11,14 @@ var prototype_vshader =
                 uniform mat4 projectionMat;
                 uniform mat4 modelViewMat;
                 uniform mat4 transMat;
-                out vec4 posBasedColor;
                 out vec2 t_coords;
+                out float fs_depth;
+                out vec4 fs_Position;
                 void main() {
-                    posBasedColor = modelViewMat * transMat * vec4(a_Position, 1.0);
-                    gl_Position = projectionMat * posBasedColor;
+                    fs_Position = modelViewMat * transMat * vec4(a_Position, 1.0);
+                    gl_Position = projectionMat * fs_Position;
                     t_coords = t_coord;
+                    fs_depth = ((gl_Position.z / gl_Position.w));
                 }
                 `;
 
@@ -24,11 +26,17 @@ var prototype_fshader =
     `#version 300 es
                 
                 precision mediump float;
-                in vec4 posBasedColor;
                 in vec2 t_coords;
+                in float fs_depth;
+                in vec4 fs_Position; 
                 uniform sampler2D uSampler;
-                out vec4 outColor;
+                layout(location = 0) out vec4 frag_0;
+                layout(location = 1) out vec4 frag_1;
+                layout(location = 2) out vec4 frag_2;
                 void main() {
-                    outColor = texture(uSampler, vec2(t_coords.s, t_coords.t)); // Set the point color
+                        //position, depth, color
+                    frag_0 = vec4(vec3(fs_depth), 1.0);
+                    frag_1 = fs_Position;
+                    frag_2 = vec4(texture(uSampler, t_coords).xyz, 1.0);
                 }
                 `;

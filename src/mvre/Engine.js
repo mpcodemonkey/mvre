@@ -16,15 +16,15 @@ found in the LICENSE file.
  * become usable in the engine.
  */
 
-define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene', 'renderer'],
-    function (glmatrix, samples, polyfill, basegame, SceneNode, renderer) {
+define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene', 'DeferredRenderer'],
+    function (glmatrix, samples, polyfill, basegame, SceneNode, DeferredRenderer) {
 
     "use strict";
 
 
     // global objects
     var scenegraph = null;
-
+    var renderer = null;
     /* This entire block in only to facilitate dynamically enabling and
      disabling the WebVR polyfill, and is not necessary for most WebVR apps.
      If you want to use the polyfill in your app, just include the js file and
@@ -63,6 +63,8 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene', 'renderer'],
     gl.clearColor(0.1, 0.2, 0.3, 1.0);
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.CULL_FACE);
+    //set up renderer
+    renderer = new DeferredRenderer(gl, webglCanvas.width, webglCanvas.height);
 
     var presentingMessage = document.getElementById("presenting-message");
 
@@ -182,6 +184,7 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene', 'renderer'],
             webglCanvas.width = webglCanvas.offsetWidth * window.devicePixelRatio;
             webglCanvas.height = webglCanvas.offsetHeight * window.devicePixelRatio;
         }
+        renderer.setRenderDimensions(webglCanvas.width, webglCanvas.height);
     }
     window.addEventListener("resize", onResize, false);
     onResize();
@@ -189,6 +192,7 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene', 'renderer'],
     //initialize game setup
     scenegraph = init(gl);
 
+    //initialize renderer
 
     /**
      * Render loop for engine
@@ -221,11 +225,11 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene', 'renderer'],
                 // When presenting render a stereo view.
                 gl.viewport(0, 0, webglCanvas.width * 0.5, webglCanvas.height);
                 // render scenegraph for left eye here
-                render(scenegraph, gl, frameData.leftProjectionMatrix, frameData.leftViewMatrix);
+                render(scenegraph, frameData.leftProjectionMatrix, frameData.leftViewMatrix);
 
                 gl.viewport(webglCanvas.width * 0.5, 0, webglCanvas.width * 0.5, webglCanvas.height);
                 // render scenegraph for right eye here
-                render(scenegraph, gl, frameData.rightProjectionMatrix, frameData.rightViewMatrix);
+                renderer.render(scenegraph, frameData.rightProjectionMatrix, frameData.rightViewMatrix);
 
                 // If we're currently presenting to the VRDisplay we need to
                 // explicitly indicate we're done rendering.
@@ -236,7 +240,7 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene', 'renderer'],
                 gl.viewport(0, 0, webglCanvas.width, webglCanvas.height);
                 // It's best to use our own projection matrix in this case, but we can use the left eye's view matrix
                 glmatrix.mat4.perspective(projectionMat, Math.PI*0.4, webglCanvas.width / webglCanvas.height, 0.1, 1024.0);
-                render(scenegraph, gl, projectionMat, frameData.leftViewMatrix);
+                renderer.render(scenegraph, projectionMat, frameData.leftViewMatrix);
                 //console.log(frameData.leftViewMatrix.toString());
                 //console.log(projectionMat.toString());
 
@@ -248,7 +252,7 @@ define( ['glmatrix', 'samples', 'polyfill', 'basegame', 'scene', 'renderer'],
             gl.viewport(0, 0, webglCanvas.width, webglCanvas.height);
             glmatrix.mat4.perspective(projectionMat, Math.PI*0.4, webglCanvas.width / webglCanvas.height, 0.1, 1024.0);
             glmatrix.mat4.identity(viewMat);
-            render(scenegraph, gl, projectionMat, viewMat);
+            renderer.render(scenegraph, projectionMat, viewMat);
         }
     }
     window.requestAnimationFrame(onAnimationFrame);
