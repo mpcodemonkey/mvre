@@ -26,7 +26,7 @@ define(["Skybox", "Shaders", "Node", "Cube", "glmatrix", "TranslationController"
 
         skybox = new Skybox();
         skybox.name = "bawks";
-        skybox.setImageSrc("mvre/media/images/bucklebox.jpg");
+        skybox.setImageSrc("mvre/media/images/default.jpg");
         skybox.VSHADER_SOURCE = prototype_vshader;
         skybox.FSHADER_SOURCE = prototype_fshader;
         skybox.build(gl);
@@ -42,7 +42,7 @@ define(["Skybox", "Shaders", "Node", "Cube", "glmatrix", "TranslationController"
         sun.name = "sun";
         sun.VSHADER_SOURCE = prototype_vshader;
         sun.FSHADER_SOURCE = prototype_fshader;
-        sun.setImageSrc("mvre/media/images/chang.jpg");
+        sun.setImageSrc("mvre/media/images/default.jpg");
         sun.build(gl);
         sun.setParent(sunRotator);
 
@@ -69,7 +69,7 @@ define(["Skybox", "Shaders", "Node", "Cube", "glmatrix", "TranslationController"
         moon.VSHADER_SOURCE = sun.VSHADER_SOURCE;
 
         moon.FSHADER_SOURCE = sun.FSHADER_SOURCE;
-        moon.setImageSrc("mvre/media/images/krovetz.jpg")
+        moon.setImageSrc("mvre/media/images/default.jpg")
         moon.build(gl);
         moon.scale(.3,.3,.3);
         moon.setParent(earthGroup);
