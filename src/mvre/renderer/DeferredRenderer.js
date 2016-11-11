@@ -73,6 +73,8 @@ define('DeferredRenderer',['BaseRenderer', 'glmatrix'], function(BaseRenderer, g
          * for now, I will only implement the first pass, since
          * I currently have no lighting or shadow mapping implemented
          * yet.
+         *
+         * note: currently does not work
          */
 
         this.gl.enable(this.gl.DEPTH_TEST);
