@@ -1,10 +1,36 @@
 /**
+ * Created by ubufu on 11/14/2016.
+ */
+/**
  * Created by ubufu on 9/20/2016.
  */
-define(["Skybox", "Shaders", "Node", "Cube", "glmatrix", "TranslationController", "RotationController"],function (Skybox, Shaders, Node, Cube, glmatrix, TranslationController, RotationController){
+define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", "glmatrix", "TranslationController", "RotationController", "ModelLoader"],
+    function (
+    BaseGame,
+    Environment,
+    Skybox,
+    Shaders,
+    Node,
+    Cube,
+    glmatrix,
+    TranslationController,
+    RotationController,
+    ModelLoader){
 
-    //globals(for demo only)
-    var skybox
+    var Game = function(Environment){
+        BaseGame.call(this, Environment);
+    }
+
+    Game.prototype = Object.create(BaseGame.prototype);
+
+
+    /**
+     * All variable declarations should occur here for
+     * global values that will be used throughout the
+     * game.
+     */
+
+    var skybox = null
     var system = null;
     var sunRotator;
     var sun = null;
@@ -13,16 +39,19 @@ define(["Skybox", "Shaders", "Node", "Cube", "glmatrix", "TranslationController"
     var earthGroup = null;
     var child2Controller = null;
     var moon = null;
+
     /**
      * This is where the initial Scenegraph and all control logic
      * for a given application must be written.
      * @param gl
      */
-    this.init = function(gl){
+    Game.prototype.init = function(gl, world){
 
+        /*
         system = new Node();
         system.name = "system";
         system.translate(0,0,-4);
+        this.environment.addNode(system);
 
         skybox = new Skybox();
         skybox.name = "bawks";
@@ -33,10 +62,12 @@ define(["Skybox", "Shaders", "Node", "Cube", "glmatrix", "TranslationController"
         skybox.setParent(system);
         skybox.translate(0,0,4);
         skybox.scale(2,2,2);
+        this.environment.addNode(skybox);
 
         sunRotator = new RotationController();
         sunRotator.name = "sunRot";
         sunRotator.setParent(system);
+        this.environment.addNode(sunRotator);
 
         sun = new Cube();
         sun.name = "sun";
@@ -45,16 +76,19 @@ define(["Skybox", "Shaders", "Node", "Cube", "glmatrix", "TranslationController"
         sun.setImageSrc("mvre/media/images/default.jpg");
         sun.build(gl);
         sun.setParent(sunRotator);
+        this.environment.addNode(sun);
 
         earthController = new RotationController();
         earthController.name = "childController";
         earthController.setDefaultRotationRate(.005);
         earthController.setParent(system);
+        this.environment.addNode(earthController);
 
         earthGroup = new Node();
         earthGroup.name = "Earth Group";
         earthGroup.setParent(earthController);
         earthGroup.translate(4,0,0);
+        this.environment.addNode(earthGroup);
 
         earth = new Cube();
         earth.name = "child";
@@ -63,6 +97,7 @@ define(["Skybox", "Shaders", "Node", "Cube", "glmatrix", "TranslationController"
         earth.build(gl);
         earth.setParent(earthGroup);
         earth.scale(0.7,0.7,0.7);
+        this.environment.addNode(earth);
 
         moon = new Cube();
         moon.name = "bill";
@@ -73,17 +108,37 @@ define(["Skybox", "Shaders", "Node", "Cube", "glmatrix", "TranslationController"
         moon.build(gl);
         moon.scale(.3,.3,.3);
         moon.setParent(earthGroup);
+        this.environment.addNode(moon);
+        */
 
+        var m = new ModelLoader();
+        m.parseObjFile("mvre/models/gem_test.obj");
+
+        system = new Cube();
+        system.vertices = m.getVertices();
+        system.textureCoords = m.getTextureCoordinates();
+        system.indices = m.getIndices();
+        system.name = "system";
+        system.VSHADER_SOURCE = prototype_vshader;
+        system.FSHADER_SOURCE = prototype_fshader;
+        system.setImageSrc("mvre/media/images/gemUV_color.jpg");
+        system.build(gl);
+        system.translate(0,0,-4);
+        this.environment.addNode(system);
         return system;
     }
 
 
-    this.update = function (){
+    Game.prototype.update = function (){
 
-        glmatrix.mat4.identity(moon.tMatrix);
-        moon.translate(0, 3*Math.sin(-moon.curtim/90) ,3*Math.cos(-moon.curtim/90));
-        moon.rotate(0.05, glmatrix.vec3.fromValues(1.0,0.0,0.0));
-        moon.curtim++;
+
+        //glmatrix.mat4.identity(moon.tMatrix);
+        //moon.translate(0, 3*Math.sin(-moon.curtim/90) ,3*Math.cos(-moon.curtim/90));
+        system.rotate(0.05, glmatrix.vec3.fromValues(1.0,1.0,1.0));
+        //moon.curtim++;
+
 
     }
+
+    return Game;
 });

@@ -10,6 +10,7 @@ requirejs.config({
       Skybox: './mvre/scene/Skybox',
       Cube: './mvre/scene/Cube',
       Shaders: './mvre/Shaders',
+      Environment: './mvre/objects/Environment',
       TranslationController: './mvre/scene/TranslationController',
       RotationController: './mvre/scene/RotationController',
       BaseController: './mvre/scene/BaseController',
@@ -18,7 +19,9 @@ requirejs.config({
       engine: './mvre/Engine',
       polyfill: './third-party/webvr-polyfill',
       samples: './third-party/vr-samples-util',
-      basegame: 'baseGame',
+      BaseGame: './mvre/BaseGame',
+      Game: 'Game',
+      ModelLoader: './mvre/objects/ModelLoader',
       cuon: './third-party/cuon-utils'
     }
 });

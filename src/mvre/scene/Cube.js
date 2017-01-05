@@ -7,6 +7,8 @@ define('Cube',['Node'], function(Node) {
     var Cube = function () {
         Node.call(this);
 
+        this.setDrawable(true);
+
         //default cube, modified from https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL
         this.vertices = [
             // Front face
@@ -125,10 +127,10 @@ define('Cube',['Node'], function(Node) {
         gl.vertexAttribPointer(this.vertexBuffer, 3, gl.FLOAT, false, 0, 0);
 
         //initialize index buffer
-        this.indexBuffer = initBuffer(gl);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), gl.STATIC_DRAW);
-        this.indexCount = this.indices.length;
+        //this.indexBuffer = initBuffer(gl);
+        //gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+        //gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), gl.STATIC_DRAW);
+        //this.indexCount = this.indices.length;
 
         //get positions for model, view, and translate matrices
         this.projectionMat = gl.getUniformLocation(this.program, "projectionMat");
