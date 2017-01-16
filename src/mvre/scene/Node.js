@@ -6,7 +6,7 @@
  * This class is based off of the tutorial by Erik Hazzard located at http://vasir.net/blog/game-development/how-to-build-entity-component-system-in-javascript
  */
 
-define('Node',['glmatrix'], function(glmatrix){
+define('Node',['glmatrix', 'ModelLoader', 'EventEmitter'], function(glmatrix, ModelLoader, Events){
 
     var Node = function(name){
         this.name = name;
@@ -16,9 +16,26 @@ define('Node',['glmatrix'], function(glmatrix){
         this.lMatrix = glmatrix.mat4.create();
         this.wMatrix = glmatrix.mat4.create();
 
+        this.vertices = null;
+        this.indices = null;
+        this.textureCoords = null;
+
         this.parent = null;
         this.children = [];
         this.drawable = false;
+
+    }
+
+    Node.prototype.build = function(gl){
+        //stub
+    }
+
+    Node.prototype.buildFromFile = function(gl, m){
+        this.vertices = m.getVertices();
+        this.indices = m.getIndices();
+        this.textureCoords = m.getTextureCoordinates();
+        this.build(gl);
+        this.drawable = true;
     }
 
     Node.prototype.translate = function (x, y, z) {

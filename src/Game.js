@@ -111,18 +111,15 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
         this.environment.addNode(moon);
         */
 
-        var m = new ModelLoader();
-        m.parseObjFile("mvre/models/gem_test.obj");
 
-        system = new Cube();
-        system.vertices = m.getVertices();
-        system.textureCoords = m.getTextureCoordinates();
-        system.indices = m.getIndices();
+
+        system = new Cube("system", gl);
         system.name = "system";
         system.VSHADER_SOURCE = prototype_vshader;
         system.FSHADER_SOURCE = prototype_fshader;
         system.setImageSrc("mvre/media/images/gemUV_color.jpg");
-        system.build(gl);
+        var  m = new ModelLoader();
+        m.loadModel(gl, system, "mvre/models/gem_test.obj");
         system.translate(0,0,-4);
         this.environment.addNode(system);
         return system;

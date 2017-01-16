@@ -21,6 +21,7 @@ requirejs.config({
       samples: './third-party/vr-samples-util',
       BaseGame: './mvre/BaseGame',
       Game: 'Game',
+      EventEmitter: './third-party/EventEmitter.min',
       ModelLoader: './mvre/objects/ModelLoader',
       cuon: './third-party/cuon-utils'
     }

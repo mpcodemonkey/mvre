@@ -4,10 +4,10 @@
 
 define('Cube',['Node'], function(Node) {
 
-    var Cube = function () {
-        Node.call(this);
+    var Cube = function (name, gl) {
+        Node.call(this, name, gl);
 
-        this.setDrawable(true);
+        //this.setDrawable(true);
 
         //default cube, modified from https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL
         this.vertices = [
