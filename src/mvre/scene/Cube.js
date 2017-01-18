@@ -4,13 +4,13 @@
 
 define('Cube',['Node'], function(Node) {
 
-    var Cube = function (name, gl) {
-        Node.call(this, name, gl);
+    var Cube = function (name) {
+        Node.call(this, name);
 
         //this.setDrawable(true);
 
         //default cube, modified from https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL
-        this.vertices = [
+        this.components.MeshComponent.vertices = [
             // Front face
             -1.0, -1.0, 1.0,
             1.0, -1.0, 1.0,
@@ -47,7 +47,7 @@ define('Cube',['Node'], function(Node) {
             -1.0, 1.0, 1.0,
             -1.0, 1.0, -1.0
         ];
-        this.indices = [
+        this.components.MeshComponent.indices = [
             0, 1, 2, 0, 2, 3,    // front
             4, 5, 6, 4, 6, 7,    // back
             8, 9, 10, 8, 10, 11,   // top
@@ -55,7 +55,7 @@ define('Cube',['Node'], function(Node) {
             16, 17, 18, 16, 18, 19,   // right
             20, 21, 22, 20, 22, 23,   // left
         ];
-        this.textureCoords = [
+        this.components.MeshComponent.textureCoords = [
             // Front
             0.0, 0.0,
             1.0, 0.0,
@@ -122,7 +122,7 @@ define('Cube',['Node'], function(Node) {
         //initialize vertex buffer
         this.vertexBuffer = initBuffer(gl);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.components.MeshComponent.vertices), gl.STATIC_DRAW);
         this.vertexPosition = gl.getAttribLocation(this.program, 'a_Position');
         gl.vertexAttribPointer(this.vertexBuffer, 3, gl.FLOAT, false, 0, 0);
 
@@ -141,7 +141,7 @@ define('Cube',['Node'], function(Node) {
         this.texture = initTexture(gl, this.imageSrc);
         this.textureBuffer = initBuffer(gl);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.textureBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.textureCoords), gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.components.MeshComponent.textureCoords), gl.STATIC_DRAW);
         this.texturePosition = gl.getAttribLocation(this.program, "t_coord");
         gl.enableVertexAttribArray(this.texturePosition);
         gl.vertexAttribPointer(this.texturePosition, 2, gl.FLOAT, false, 0, 0);

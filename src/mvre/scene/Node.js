@@ -6,9 +6,10 @@
  * This class is based off of the tutorial by Erik Hazzard located at http://vasir.net/blog/game-development/how-to-build-entity-component-system-in-javascript
  */
 
-define('Node',['glmatrix', 'ModelLoader', 'EventEmitter'], function(glmatrix, ModelLoader, Events){
+define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent'], function(glmatrix, NodeEntity, cuon, MeshComponent){
 
     var Node = function(name){
+        NodeEntity.call(this);
         this.name = name;
         this.tMatrix = glmatrix.mat4.create();
         this.rMatrix = glmatrix.mat4.create();
@@ -16,9 +17,9 @@ define('Node',['glmatrix', 'ModelLoader', 'EventEmitter'], function(glmatrix, Mo
         this.lMatrix = glmatrix.mat4.create();
         this.wMatrix = glmatrix.mat4.create();
 
-        this.vertices = null;
-        this.indices = null;
-        this.textureCoords = null;
+
+        //create base component for mesh information
+        this.addComponent(new MeshComponent('Mesh'));
 
         this.parent = null;
         this.children = [];
@@ -26,14 +27,16 @@ define('Node',['glmatrix', 'ModelLoader', 'EventEmitter'], function(glmatrix, Mo
 
     }
 
+    Node.prototype = Object.create(NodeEntity.prototype);
+
     Node.prototype.build = function(gl){
         //stub
     }
 
     Node.prototype.buildFromFile = function(gl, m){
-        this.vertices = m.getVertices();
-        this.indices = m.getIndices();
-        this.textureCoords = m.getTextureCoordinates();
+        this.components.MeshComponent.vertices = m.getVertices();
+        this.components.MeshComponent.indices = m.getIndices();
+        this.components.MeshComponent.textureCoords = m.getTextureCoordinates();
         this.build(gl);
         this.drawable = true;
     }

@@ -16,8 +16,8 @@ found in the LICENSE file.
  * become usable in the engine.
  */
 
-define( ['Environment', 'glmatrix', 'samples', 'polyfill', 'Game', 'scene', 'renderer'],
-    function (Environment, glmatrix, samples, polyfill, Game, SceneNode, renderer) {
+define( ['Environment', 'glmatrix', 'samples', 'polyfill', 'Game', 'renderer'],
+    function (Environment, glmatrix, samples, polyfill, Game, renderer) {
 
     "use strict";
 

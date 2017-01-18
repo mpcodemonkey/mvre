@@ -6,7 +6,6 @@ requirejs.config({
   baseUrl: '',
     paths: {
       glmatrix: './third-party/gl-matrix-min',
-      scene: './mvre/SceneNode',
       Skybox: './mvre/scene/Skybox',
       Cube: './mvre/scene/Cube',
       Shaders: './mvre/Shaders',
@@ -15,6 +14,8 @@ requirejs.config({
       RotationController: './mvre/scene/RotationController',
       BaseController: './mvre/scene/BaseController',
       Node: './mvre/scene/Node',
+      NodeEntity: './mvre/Entity/NodeEntity',
+      MeshComponent: './mvre/Component/MeshComponent',
       renderer: './mvre/renderer',
       engine: './mvre/Engine',
       polyfill: './third-party/webvr-polyfill',
@@ -22,7 +23,7 @@ requirejs.config({
       BaseGame: './mvre/BaseGame',
       Game: 'Game',
       EventEmitter: './third-party/EventEmitter.min',
-      ModelLoader: './mvre/objects/ModelLoader',
+      ModelLoader: './mvre/loader/ModelLoader',
       cuon: './third-party/cuon-utils'
     }
 });

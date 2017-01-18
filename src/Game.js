@@ -113,7 +113,7 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
 
 
 
-        system = new Cube("system", gl);
+        system = new Cube("system");
         system.name = "system";
         system.VSHADER_SOURCE = prototype_vshader;
         system.FSHADER_SOURCE = prototype_fshader;
