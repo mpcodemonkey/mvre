@@ -28,12 +28,51 @@ define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent', 'TextureCompon
         this.children = [];
         this.drawable = false;
 
+        //program
+        this.program = null;
+
+        //uniforms
+        this.projectionMat = null;
+        this.modelViewMat = null;
+        this.transMat = null;
+
+
     }
 
     Node.prototype = Object.create(NodeEntity.prototype);
 
-    Node.prototype.build = function(gl){
-        //stub
+    Node.prototype.build = function (gl) {
+
+        var self = this;
+        //create shader program
+        //this.program = createProgram(gl, this.VSHADER_SOURCE, this.FSHADER_SOURCE);
+        this.program = createProgramFromComponents(this, gl);
+
+        //initialize index buffer
+        //this.indexBuffer = initBuffer(gl);
+        //gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+        //gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), gl.STATIC_DRAW);
+        //this.indexCount = this.indices.length;
+
+        //temp: build texture
+        Object.values(this.components).forEach(function(component){
+            component.build(gl, self.program);
+        })
+
+        //get positions for model, view, and translate matrices
+        this.projectionMat = gl.getUniformLocation(this.program, "projectionMat");
+        this.modelViewMat = gl.getUniformLocation(this.program, "modelViewMat");
+        this.transMat = gl.getUniformLocation(this.program, "transMat");
+
+
+        this.setDrawable(true);
+    }
+
+    Node.prototype.setImageSrc = function(source){
+        if(this.components.TextureComponent != null)
+            this.components.TextureComponent.imageSrc = source;
+        else
+            console.log('No texture component to apply image to');
     }
 
     Node.prototype.translate = function (x, y, z) {

@@ -1,15 +1,13 @@
 /**
  * Created by ubufu on 11/8/2016.
+ *
+ * default cube, modified from https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL
  */
 
 define('Cube',['Node'], function(Node) {
 
     var Cube = function (name) {
         Node.call(this, name);
-
-        //this.setDrawable(true);
-
-        //default cube, modified from https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL
         this.components.MeshComponent.vertices = [
             // Front face
             -1.0, -1.0, 1.0,
@@ -87,17 +85,7 @@ define('Cube',['Node'], function(Node) {
             1.0, 1.0,
             0.0, 1.0
         ];
-        this.program = null;
-        this.projectionMat = null;
-        this.modelViewMat = null;
-        this.transMat = null;
-        this.curtim = 0;
 
-        //create shaders
-        this.VSHADER_SOURCE = "";
-
-        // Fragment shader program
-        this.FSHADER_SOURCE = "";
     };
 
 
@@ -106,39 +94,6 @@ define('Cube',['Node'], function(Node) {
         Node.prototype.update.call(this);
     }
 
-    Cube.prototype.build = function (gl) {
-
-        var self = this;
-        //create shader program
-        //this.program = createProgram(gl, this.VSHADER_SOURCE, this.FSHADER_SOURCE);
-        this.program = createProgramFromComponents(this, gl);
-
-        //initialize index buffer
-        //this.indexBuffer = initBuffer(gl);
-        //gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-        //gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), gl.STATIC_DRAW);
-        //this.indexCount = this.indices.length;
-
-        //temp: build texture
-        Object.values(this.components).forEach(function(component){
-            component.build(gl, self.program);
-        })
-
-        //get positions for model, view, and translate matrices
-        this.projectionMat = gl.getUniformLocation(this.program, "projectionMat");
-        this.modelViewMat = gl.getUniformLocation(this.program, "modelViewMat");
-        this.transMat = gl.getUniformLocation(this.program, "transMat");
-
-
-        this.setDrawable(true);
-    }
-
-    Cube.prototype.setImageSrc = function(source){
-        if(this.components.TextureComponent != null)
-            this.components.TextureComponent.imageSrc = source;
-        else
-            console.log('No texture component to apply image to');
-    }
 
     return Cube;
 });
