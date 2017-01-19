@@ -134,4 +134,84 @@ function handleTextureLoaded(gl, texture) {
   gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
+function createProgramFromComponents(node, gl){
+  var vertexShader = null;
+  var fragmentShader = null;
+
+  var compare = node.VSHADER_SOURCE;
+
+  //start with vertex shader
+  vertexShader = [
+        "#version 300 es",
+        "",
+        "precision mediump float;",
+    ].join("\n");
+
+    Object.values(node.components).forEach(function(component){
+        vertexShader += "\n" + component.VShaderAttributes + "\n";
+    })
+
+    //create uniforms
+    vertexShader += [
+        "uniform mat4 projectionMat;",
+        "uniform mat4 modelViewMat;",
+        "uniform mat4 transMat;"
+    ].join("\n");
+
+    Object.values(node.components).forEach(function(component){
+        vertexShader += "\n" + component.VShaderOutput + "\n";
+    })
+
+    vertexShader += [
+        "void main() {"
+    ].join("\n");
+
+    Object.values(node.components).forEach(function(component){
+        vertexShader += "\n" + component.VShaderMain + "\n";
+    })
+
+    vertexShader += [
+        "}"
+    ].join("\n");
+
+    //fragment shader next
+    fragmentShader = [
+        "#version 300 es",
+        "",
+        "precision mediump float;",
+    ].join("\n");
+
+    Object.values(node.components).forEach(function(component){
+        fragmentShader += "\n" + component.FShaderAttributes + "\n";
+    })
+
+    //create uniforms
+    fragmentShader += [
+        "uniform mat4 projectionMat;",
+        "uniform mat4 modelViewMat;",
+        "uniform mat4 transMat;"
+    ].join("\n");
+
+    Object.values(node.components).forEach(function(component){
+        fragmentShader += "\n" + component.FShaderOutput + "\n";
+    })
+
+    fragmentShader += [
+        "void main() {"
+    ].join("\n");
+
+    Object.values(node.components).forEach(function(component){
+        fragmentShader += "\n" + component.FShaderMain + "\n";
+    })
+
+    fragmentShader += [
+        "}"
+    ].join("\n");
+
+    //now create shaders as you normally would
+    var program = createProgram(gl, vertexShader, fragmentShader);
+
+    return program;
+}
+
 

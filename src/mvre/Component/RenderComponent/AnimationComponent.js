@@ -1,8 +1,10 @@
 /**
  * Created by ubufu on 1/18/2017.
+ *
+ * modified from https://raw.githubusercontent.com/toji/building-the-game/part-3/public/js/animation.js
  */
 
-define('AnimationComponent', [], function(){
+define('AnimationComponent', ['glmatrix'], function(glmatrix){
 
     //all animation information used by animated nodes
     //currently implemented:
@@ -13,12 +15,11 @@ define('AnimationComponent', [], function(){
 
     var AnimationComponent = function(){
         this.skinIndices = [],
-            this.skinWeights = [],
-            this.bones = [],
-            this.keyframes = []
+        this.skinWeights = [],
+        this.bones = [],
+        this.keyframes = []
+        this.animated = false;
     };
-
-    //todo: add functions for stepping through keyframes. Note: some coupling between mesh/animation components will exist
 
     AnimationComponent.prototype.name = 'AnimationComponent';
 

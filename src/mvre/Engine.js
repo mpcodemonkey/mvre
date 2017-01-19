@@ -210,7 +210,7 @@ define( ['Environment', 'glmatrix', 'samples', 'polyfill', 'Game', 'renderer'],
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         //call update in baseGame to compute new object positions, control logic, etc.
-        game.update();
+        game.update(t);
         scenegraph.update();
 
         if (vrDisplay) {

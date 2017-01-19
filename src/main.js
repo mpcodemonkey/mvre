@@ -15,7 +15,9 @@ requirejs.config({
       BaseController: './mvre/scene/BaseController',
       Node: './mvre/scene/Node',
       NodeEntity: './mvre/Entity/NodeEntity',
-      MeshComponent: './mvre/Component/MeshComponent',
+      MeshComponent: './mvre/Component/RenderComponent/MeshComponent',
+      TextureComponent: './mvre/Component/RenderComponent/TextureComponent',
+      AnimationComponent: './mvre/Component/RenderComponent/AnimationComponent',
       renderer: './mvre/renderer',
       engine: './mvre/Engine',
       polyfill: './third-party/webvr-polyfill',
@@ -24,6 +26,7 @@ requirejs.config({
       Game: 'Game',
       EventEmitter: './third-party/EventEmitter.min',
       ModelLoader: './mvre/loader/ModelLoader',
+      JSONLoader: './mvre/loader/JSONLoader',
       cuon: './third-party/cuon-utils'
     }
 });

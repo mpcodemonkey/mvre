@@ -126,8 +126,7 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
     }
 
 
-    Game.prototype.update = function (){
-
+    Game.prototype.update = function (delta){
 
         //glmatrix.mat4.identity(moon.tMatrix);
         //moon.translate(0, 3*Math.sin(-moon.curtim/90) ,3*Math.cos(-moon.curtim/90));

@@ -28,15 +28,11 @@ define(['Environment', 'Skybox','glmatrix', 'Cube'], function(Environment, Skybo
                 gl.vertexAttribPointer(renderable.vertexPosition, 3, gl.FLOAT, false, 0, 0);
                 gl.enableVertexAttribArray(renderable.vertexPosition);
 
-                gl.bindBuffer(gl.ARRAY_BUFFER, renderable.textureBuffer);
-                gl.vertexAttribPointer(renderable.texturePosition, 2, gl.FLOAT, false, 0, 0);
-                gl.enableVertexAttribArray(renderable.texturePosition);
+                //temp: set up texture
+                renderable.components.TextureComponent.apply(gl, renderable.program);
 
-                //gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, renderable.indexBuffer);
+                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, renderable.indexBuffer);
 
-                gl.activeTexture(gl.TEXTURE0);
-                gl.bindTexture(gl.TEXTURE_2D, renderable.texture);
-                gl.uniform1i(gl.getUniformLocation(renderable.program, "uSampler"), 0);
 
                 if(renderable instanceof Skybox){
                     gl.disable(gl.DEPTH_TEST);

@@ -6,7 +6,7 @@
  * This class is based off of the tutorial by Erik Hazzard located at http://vasir.net/blog/game-development/how-to-build-entity-component-system-in-javascript
  */
 
-define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent'], function(glmatrix, NodeEntity, cuon, MeshComponent){
+define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent', 'TextureComponent'], function(glmatrix, NodeEntity, cuon, MeshComponent, TextureComponent){
 
     var Node = function(name){
         NodeEntity.call(this);
@@ -20,6 +20,9 @@ define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent'], function(glma
 
         //create base component for mesh information
         this.addComponent(new MeshComponent('Mesh'));
+        this.addComponent(new TextureComponent('Texture'));
+
+        //all other components are optional.
 
         this.parent = null;
         this.children = [];
@@ -31,14 +34,6 @@ define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent'], function(glma
 
     Node.prototype.build = function(gl){
         //stub
-    }
-
-    Node.prototype.buildFromFile = function(gl, m){
-        this.components.MeshComponent.vertices = m.getVertices();
-        this.components.MeshComponent.indices = m.getIndices();
-        this.components.MeshComponent.textureCoords = m.getTextureCoordinates();
-        this.build(gl);
-        this.drawable = true;
     }
 
     Node.prototype.translate = function (x, y, z) {

@@ -87,9 +87,6 @@ define('Cube',['Node'], function(Node) {
             1.0, 1.0,
             0.0, 1.0
         ];
-        this.texturePosition = null;
-        this.texture = null;
-        this.textureBuffer = null;
         this.program = null;
         this.projectionMat = null;
         this.modelViewMat = null;
@@ -99,7 +96,6 @@ define('Cube',['Node'], function(Node) {
         this.indexCount = 0;
         this.curtim = 0;
         this.vertexPosition = 0;
-        this.imageSrc = "mvre/media/images/default.jpg";
 
         //create shaders
         this.VSHADER_SOURCE = "";
@@ -117,7 +113,8 @@ define('Cube',['Node'], function(Node) {
     Cube.prototype.build = function (gl) {
 
         //create shader program
-        this.program = createProgram(gl, this.VSHADER_SOURCE, this.FSHADER_SOURCE);
+        //this.program = createProgram(gl, this.VSHADER_SOURCE, this.FSHADER_SOURCE);
+        this.program = createProgramFromComponents(this, gl);
 
         //initialize vertex buffer
         this.vertexBuffer = initBuffer(gl);
@@ -132,23 +129,23 @@ define('Cube',['Node'], function(Node) {
         //gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), gl.STATIC_DRAW);
         //this.indexCount = this.indices.length;
 
+        //temp: build texture
+        this.components.TextureComponent.build(gl, this.program);
+
         //get positions for model, view, and translate matrices
         this.projectionMat = gl.getUniformLocation(this.program, "projectionMat");
         this.modelViewMat = gl.getUniformLocation(this.program, "modelViewMat");
         this.transMat = gl.getUniformLocation(this.program, "transMat");
 
-        //initialize texture
-        this.texture = initTexture(gl, this.imageSrc);
-        this.textureBuffer = initBuffer(gl);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.textureBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.components.MeshComponent.textureCoords), gl.STATIC_DRAW);
-        this.texturePosition = gl.getAttribLocation(this.program, "t_coord");
-        gl.enableVertexAttribArray(this.texturePosition);
-        gl.vertexAttribPointer(this.texturePosition, 2, gl.FLOAT, false, 0, 0);
+
+        this.setDrawable(true);
     }
 
     Cube.prototype.setImageSrc = function(source){
-        this.imageSrc = source;
+        if(this.components.TextureComponent != null)
+            this.components.TextureComponent.imageSrc = source;
+        else
+            console.log('No texture component to apply image to');
     }
 
     return Cube;

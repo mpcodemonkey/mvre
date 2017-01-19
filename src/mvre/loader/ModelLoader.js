@@ -28,7 +28,12 @@ define('ModelLoader', ['glmatrix', 'EventEmitter'],function (glmatrix, Events){
             //el cheapo async call
             self.parseObjFile(request.responseText)
                 .then(function(){
-                    node.buildFromFile(gl, self);
+                    node.components.MeshComponent.vertices = self.vertices;
+                    node.components.MeshComponent.indices = self.indices;
+                    if(node.components.TextureComponent != null){
+                        node.components.TextureComponent.textureCoords = self.textureCoordinates;
+                    }
+                    node.build(gl);
             });
 
         };
