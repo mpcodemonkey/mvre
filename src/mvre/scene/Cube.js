@@ -91,11 +91,7 @@ define('Cube',['Node'], function(Node) {
         this.projectionMat = null;
         this.modelViewMat = null;
         this.transMat = null;
-        this.vertexBuffer = null;
-        this.indexBuffer = null;
-        this.indexCount = 0;
         this.curtim = 0;
-        this.vertexPosition = 0;
 
         //create shaders
         this.VSHADER_SOURCE = "";
@@ -112,16 +108,10 @@ define('Cube',['Node'], function(Node) {
 
     Cube.prototype.build = function (gl) {
 
+        var self = this;
         //create shader program
         //this.program = createProgram(gl, this.VSHADER_SOURCE, this.FSHADER_SOURCE);
         this.program = createProgramFromComponents(this, gl);
-
-        //initialize vertex buffer
-        this.vertexBuffer = initBuffer(gl);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.components.MeshComponent.vertices), gl.STATIC_DRAW);
-        this.vertexPosition = gl.getAttribLocation(this.program, 'a_Position');
-        gl.vertexAttribPointer(this.vertexBuffer, 3, gl.FLOAT, false, 0, 0);
 
         //initialize index buffer
         //this.indexBuffer = initBuffer(gl);
@@ -130,7 +120,9 @@ define('Cube',['Node'], function(Node) {
         //this.indexCount = this.indices.length;
 
         //temp: build texture
-        //this.components.TextureComponent.build(gl, this.program);
+        Object.values(this.components).forEach(function(component){
+            component.build(gl, self.program);
+        })
 
         //get positions for model, view, and translate matrices
         this.projectionMat = gl.getUniformLocation(this.program, "projectionMat");

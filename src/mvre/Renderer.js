@@ -24,14 +24,10 @@ define(['Environment', 'Skybox','glmatrix', 'Cube'], function(Environment, Skybo
                 gl.uniformMatrix4fv(renderable.modelViewMat, false, vMat);
                 gl.uniformMatrix4fv(renderable.transMat, false, renderable.wMatrix);
 
-                gl.bindBuffer(gl.ARRAY_BUFFER, renderable.vertexBuffer);
-                gl.vertexAttribPointer(renderable.vertexPosition, 3, gl.FLOAT, false, 0, 0);
-                gl.enableVertexAttribArray(renderable.vertexPosition);
-
                 //temp: set up texture
-                //renderable.components.TextureComponent.apply(gl, renderable.program);
-
-                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, renderable.indexBuffer);
+                Object.values(renderable.components).forEach(function(component){
+                    component.apply(gl, renderable.program);
+                })
 
 
                 if(renderable instanceof Skybox){

@@ -14,6 +14,10 @@ define('MeshComponent', [], function(){
     var MeshComponent = function(){
         this.vertices = [],
         this.indices = [],
+        this.vertexBuffer = null;
+        this.indexBuffer = null;
+        this.vertexPosition = null;
+        this.indexCount = 0;
 
         this.VShaderAttributes = [
             "in vec3 a_Position;"
@@ -41,6 +45,23 @@ define('MeshComponent', [], function(){
     };
 
     MeshComponent.prototype.name = 'MeshComponent';
+
+    MeshComponent.prototype.build = function(gl, program){
+        //initialize vertex buffer
+        this.vertexBuffer = initBuffer(gl);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
+        this.vertexPosition = gl.getAttribLocation(program, 'a_Position');
+        gl.vertexAttribPointer(this.vertexBuffer, 3, gl.FLOAT, false, 0, 0);
+    }
+
+    MeshComponent.prototype.apply = function(gl, program){
+        //set up buffers for each draw
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+        gl.vertexAttribPointer(this.vertexPosition, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(this.vertexPosition);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+    }
 
     return MeshComponent;
 
