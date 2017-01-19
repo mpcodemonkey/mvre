@@ -35,7 +35,7 @@ define('TextureComponent', [], function(){
         ].join("\n");
 
         this.FShaderOutput = [
-            "out vec4 outColor;"
+            ""
         ].join("\n");
 
         this.FShaderMain = [

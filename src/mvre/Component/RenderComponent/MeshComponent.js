@@ -32,11 +32,11 @@ define('MeshComponent', [], function(){
         ].join("\n");
 
         this.FShaderOutput = [
-            ""
+            "out vec4 outColor;"
         ].join("\n");
 
         this.FShaderMain = [
-            ""
+            "outColor = vec4(1.0,0.0,0.0,1.0);"
         ].join("\n");
     };
 

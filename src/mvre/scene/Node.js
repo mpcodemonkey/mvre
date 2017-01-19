@@ -20,7 +20,7 @@ define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent', 'TextureCompon
 
         //create base component for mesh information
         this.addComponent(new MeshComponent('Mesh'));
-        this.addComponent(new TextureComponent('Texture'));
+        //this.addComponent(new TextureComponent('Texture'));
 
         //all other components are optional.
 

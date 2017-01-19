@@ -29,7 +29,7 @@ define(['Environment', 'Skybox','glmatrix', 'Cube'], function(Environment, Skybo
                 gl.enableVertexAttribArray(renderable.vertexPosition);
 
                 //temp: set up texture
-                renderable.components.TextureComponent.apply(gl, renderable.program);
+                //renderable.components.TextureComponent.apply(gl, renderable.program);
 
                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, renderable.indexBuffer);
 

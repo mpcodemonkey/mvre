@@ -130,7 +130,7 @@ define('Cube',['Node'], function(Node) {
         //this.indexCount = this.indices.length;
 
         //temp: build texture
-        this.components.TextureComponent.build(gl, this.program);
+        //this.components.TextureComponent.build(gl, this.program);
 
         //get positions for model, view, and translate matrices
         this.projectionMat = gl.getUniformLocation(this.program, "projectionMat");
