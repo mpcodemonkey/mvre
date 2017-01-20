@@ -11,7 +11,9 @@ define('ModelLoader', ['glmatrix', 'EventEmitter'],function (glmatrix, Events){
         this.normals = [];
         this.indices = [];
 
-        this.onCompleteEvent = new Event('onComplete');
+        //used for bounding box calculation later
+        this.min = glmatrix.vec3.create();
+        this.max = glmatrix.vec3.create();
 
     };
 
@@ -32,6 +34,10 @@ define('ModelLoader', ['glmatrix', 'EventEmitter'],function (glmatrix, Events){
                     node.components.MeshComponent.indices = self.indices;
                     if(node.components.TextureComponent != null){
                         node.components.TextureComponent.textureCoords = self.textureCoordinates;
+                    }
+                    if(node.components.PhysicsComponent != null){
+                        node.components.PhysicsComponent.min = self.min;
+                        node.components.PhysicsComponent.max = self.max;
                     }
                     node.build(gl);
             });
@@ -86,6 +92,19 @@ define('ModelLoader', ['glmatrix', 'EventEmitter'],function (glmatrix, Events){
                         self.vertices.push(vertexValues[vertRef]);
                         self.vertices.push(vertexValues[vertRef + 1]);
                         self.vertices.push(vertexValues[vertRef + 2]);
+
+                        //calculate min/max vertex values for bounding box/sphere
+                        var testPoint = glmatrix.vec3.fromValues(vertexValues[vertRef], vertexValues[vertRef + 1], vertexValues[vertRef + 2]);
+                        if(self.min == null && self.max == null){
+                            self.min = self.max = testPoint;
+                        }
+
+                        if ( testPoint[0] < self.min[0] ) self.min[0]  = testPoint[0] ;
+                        if ( testPoint[1] < self.min[1] ) self.min[1]  = testPoint[1] ;
+                        if ( testPoint[2] < self.min[2] ) self.min[2]  = testPoint[2] ;
+                        if ( testPoint[0] > self.max[0] ) self.max[0]  = testPoint[0] ;
+                        if ( testPoint[1] > self.max[1] ) self.max[1]  = testPoint[1] ;
+                        if ( testPoint[2] > self.max[2] ) self.max[2]  = testPoint[2] ;
 
                         self.textureCoordinates.push(stValues[tcRef]);
                         self.textureCoordinates.push(stValues[tcRef + 1]);

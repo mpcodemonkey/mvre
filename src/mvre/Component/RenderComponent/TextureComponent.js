@@ -45,7 +45,8 @@ define('TextureComponent', [], function(){
 
     TextureComponent.prototype.name = 'TextureComponent';
 
-    TextureComponent.prototype.build = function(gl, program){
+    TextureComponent.prototype.build = function(gl, node){
+        var program = node.program;
         //initialize texture
         this.texture = initTexture(gl, this.imageSrc);
         this.textureBuffer = initBuffer(gl);

@@ -38,7 +38,7 @@ define(['Environment', 'Skybox','glmatrix', 'Cube'], function(Environment, Skybo
                     gl.frontFace(gl.CCW);
                 }
                 else{
-                    //gl.drawElements(gl.TRIANGLES, renderable.indexCount, gl.UNSIGNED_SHORT, 0);
+                    //gl.drawElements(gl.TRIANGLES, renderable.components.MeshComponent.indexCount, gl.UNSIGNED_SHORT, 0);
                     gl.drawArrays(gl.TRIANGLES, 0, renderable.components.MeshComponent.vertices.length/3);
                 }
             }

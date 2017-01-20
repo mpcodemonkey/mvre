@@ -6,7 +6,7 @@
  * This class is based off of the tutorial by Erik Hazzard located at http://vasir.net/blog/game-development/how-to-build-entity-component-system-in-javascript
  */
 
-define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent', 'TextureComponent'], function(glmatrix, NodeEntity, cuon, MeshComponent, TextureComponent){
+define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent', 'TextureComponent', 'PhysicsComponent'], function(glmatrix, NodeEntity, cuon, MeshComponent, TextureComponent, PhysicsComponent){
 
     var Node = function(name){
         NodeEntity.call(this);
@@ -21,6 +21,7 @@ define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent', 'TextureCompon
         //create base component for mesh information
         this.addComponent(new MeshComponent('Mesh'));
         this.addComponent(new TextureComponent('Texture'));
+        this.addComponent(new PhysicsComponent('physics'));
 
         //all other components are optional.
 
@@ -56,7 +57,7 @@ define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent', 'TextureCompon
 
         //temp: build texture
         Object.values(this.components).forEach(function(component){
-            component.build(gl, self.program);
+            component.build(gl, self);
         })
 
         //get positions for model, view, and translate matrices
@@ -68,11 +69,19 @@ define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent', 'TextureCompon
         this.setDrawable(true);
     }
 
+
     Node.prototype.setImageSrc = function(source){
         if(this.components.TextureComponent != null)
             this.components.TextureComponent.imageSrc = source;
         else
             console.log('No texture component to apply image to');
+    }
+
+    Node.prototype.setPhysicsWorld = function(world){
+        if(this.components.PhysicsComponent != null)
+            this.components.PhysicsComponent.physicsWorld = world;
+        else
+            console.log('No physics component to apply world to');
     }
 
     Node.prototype.translate = function (x, y, z) {

@@ -113,15 +113,18 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
 
 
 
-        system = new Node("system");
+        system = new Cube("system");
         system.name = "system";
-        system.VSHADER_SOURCE = prototype_vshader;
-        system.FSHADER_SOURCE = prototype_fshader;
+        //system.VSHADER_SOURCE = prototype_vshader;
+        //system.FSHADER_SOURCE = prototype_fshader;
         system.setImageSrc("mvre/media/images/gemUV_color.jpg");
+        //system.build(gl);
         var  m = new ModelLoader();
         m.loadModel(gl, system, "mvre/models/gem_test.obj");
         system.translate(0,0,-4);
         this.environment.addNode(system);
+        this.enablePhysics();
+        system.setPhysicsWorld(this.physicsWorld);
         return system;
     }
 
@@ -132,6 +135,9 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
         //moon.translate(0, 3*Math.sin(-moon.curtim/90) ,3*Math.cos(-moon.curtim/90));
         system.rotate(0.05, glmatrix.vec3.fromValues(1.0,1.0,1.0));
         //moon.curtim++;
+
+        //call update from base class, should always be the last function in the game
+        BaseGame.prototype.update.call(this, delta);
 
 
     }

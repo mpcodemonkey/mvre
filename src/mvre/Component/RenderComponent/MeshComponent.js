@@ -46,13 +46,24 @@ define('MeshComponent', [], function(){
 
     MeshComponent.prototype.name = 'MeshComponent';
 
-    MeshComponent.prototype.build = function(gl, program){
+    MeshComponent.prototype.build = function(gl, node){
+        var program = node.program;
         //initialize vertex buffer
         this.vertexBuffer = initBuffer(gl);
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
         this.vertexPosition = gl.getAttribLocation(program, 'a_Position');
         gl.vertexAttribPointer(this.vertexBuffer, 3, gl.FLOAT, false, 0, 0);
+
+        //if the object uses indices for drawing
+        if(this.indices.length > 0){
+
+            //initialize index buffer
+            this.indexBuffer = initBuffer(gl);
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), gl.STATIC_DRAW);
+            this.indexCount = this.indices.length;
+        }
     }
 
     MeshComponent.prototype.apply = function(gl, program){

@@ -53,7 +53,7 @@ define('Cube',['Node'], function(Node) {
             16, 17, 18, 16, 18, 19,   // right
             20, 21, 22, 20, 22, 23,   // left
         ];
-        this.components.MeshComponent.textureCoords = [
+        this.components.TextureComponent.textureCoords = [
             // Front
             0.0, 0.0,
             1.0, 0.0,
@@ -85,6 +85,8 @@ define('Cube',['Node'], function(Node) {
             1.0, 1.0,
             0.0, 1.0
         ];
+
+        this.components.MeshComponent.indexCount = this.components.MeshComponent.indices.length;
 
     };
 
