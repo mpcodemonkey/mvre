@@ -18,7 +18,7 @@ define('BaseGame', ['cannon'],function (cannon){
     BaseGame.prototype.enablePhysics = function(){
         this.physicsEnabled = true;
         this.physicsWorld = new CANNON.World();
-        this.physicsWorld.gravity.set(0,0,-9.82); //default gravity, in m/s^2
+        this.physicsWorld.gravity.set(0,-.000000001,0); //default gravity, in m/s^2
 
     }
 

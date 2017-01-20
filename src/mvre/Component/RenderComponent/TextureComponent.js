@@ -57,7 +57,8 @@ define('TextureComponent', [], function(){
         gl.vertexAttribPointer(this.texturePosition, 2, gl.FLOAT, false, 0, 0);
     }
 
-    TextureComponent.prototype.apply = function(gl, program){
+    TextureComponent.prototype.apply = function(gl, node){
+        var program = node.program;
         //set up buffers for each draw
         gl.bindBuffer(gl.ARRAY_BUFFER, this.textureBuffer);
         gl.vertexAttribPointer(this.texturePosition, 2, gl.FLOAT, false, 0, 0);

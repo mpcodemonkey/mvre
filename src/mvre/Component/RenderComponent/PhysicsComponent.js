@@ -66,8 +66,13 @@ define('PhysicsComponent', ['glmatrix', 'cannon'], function(glmatrix, cannon){
 
     }
 
-    PhysicsComponent.prototype.apply = function(gl, program){
-
+    PhysicsComponent.prototype.apply = function(gl, node){
+        glmatrix.mat4.identity(node.tMatrix);
+        //node.translate(0,0,-4);
+        node.translate(this.boundingObject.position.x, this.boundingObject.position.y, this.boundingObject.position.z);
+        var pos = glmatrix.vec3.create();
+        glmatrix.mat4.getTranslation(pos, node.tMatrix);
+        console.log(pos);
     }
 
     PhysicsComponent.prototype._addToPhysicsWorld = function(){

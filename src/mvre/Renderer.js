@@ -26,7 +26,7 @@ define(['Environment', 'Skybox','glmatrix', 'Cube'], function(Environment, Skybo
 
                 //temp: set up texture
                 Object.values(renderable.components).forEach(function(component){
-                    component.apply(gl, renderable.program);
+                    component.apply(gl, renderable);
                 })
 
 

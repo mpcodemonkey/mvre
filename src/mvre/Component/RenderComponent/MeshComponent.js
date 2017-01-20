@@ -66,7 +66,8 @@ define('MeshComponent', [], function(){
         }
     }
 
-    MeshComponent.prototype.apply = function(gl, program){
+    MeshComponent.prototype.apply = function(gl, node){
+        var program = node.program;
         //set up buffers for each draw
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
         gl.vertexAttribPointer(this.vertexPosition, 3, gl.FLOAT, false, 0, 0);
