@@ -1,7 +1,7 @@
 /**
  * Created by ubufu on 11/14/2016.
  */
-define('ModelLoader', ['glmatrix', 'EventEmitter'],function (glmatrix, Events){
+define('ModelLoader', ['glmatrix'],function (glmatrix){
 
     var ModelLoader = function(){
         this.ready = false;

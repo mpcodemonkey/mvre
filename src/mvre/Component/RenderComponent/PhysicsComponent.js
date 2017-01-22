@@ -72,7 +72,7 @@ define('PhysicsComponent', ['glmatrix', 'cannon'], function(glmatrix, cannon){
         node.translate(this.boundingObject.position.x, this.boundingObject.position.y, this.boundingObject.position.z);
         var pos = glmatrix.vec3.create();
         glmatrix.mat4.getTranslation(pos, node.tMatrix);
-        console.log(pos);
+        //console.log(pos);
     }
 
     PhysicsComponent.prototype._addToPhysicsWorld = function(){

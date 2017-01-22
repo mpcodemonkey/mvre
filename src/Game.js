@@ -4,7 +4,7 @@
 /**
  * Created by ubufu on 9/20/2016.
  */
-define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", "glmatrix", "TranslationController", "RotationController", "ModelLoader"],
+define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", "glmatrix", "TranslationController", "RotationController", "ModelLoader", "HUD", 'TextureComponent', 'PhysicsComponent'],
     function (
     BaseGame,
     Environment,
@@ -15,7 +15,10 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
     glmatrix,
     TranslationController,
     RotationController,
-    ModelLoader){
+    ModelLoader,
+    HUD,
+    TextureComponent,
+    PhysicsComponent){
 
     var Game = function(Environment){
         BaseGame.call(this, Environment);
@@ -30,15 +33,9 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
      * game.
      */
 
-    var skybox = null
-    var system = null;
-    var sunRotator;
-    var sun = null;
-    var earthController = null;
-    var earth = null;
-    var earthGroup = null;
-    var child2Controller = null;
-    var moon = null;
+    var system = null
+    var hud = null;
+    var gem = null;
 
     /**
      * This is where the initial Scenegraph and all control logic
@@ -112,19 +109,32 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
         */
 
 
-
-        system = new Cube("system");
-        system.name = "system";
-        //system.VSHADER_SOURCE = prototype_vshader;
-        //system.FSHADER_SOURCE = prototype_fshader;
-        system.setImageSrc("mvre/media/images/gemUV_color.jpg");
-        //system.build(gl);
-        var  m = new ModelLoader();
-        m.loadModel(gl, system, "mvre/models/gem_test.obj");
-        system.translate(0,0,-4);
+        system = new Node("system");
+        system.setDrawable(false);
         this.environment.addNode(system);
+
+
+
+        hud = new HUD("HUD");
+        hud.setText("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG");
+        hud.build(gl);
+        hud.setParent(system);
+        this.environment.addNode(hud);
+
+        gem = new Node("gem");
+        gem.components.TextureComponent = new TextureComponent("texture");
+        gem.components.PhysicsComponent = new PhysicsComponent("physics");
+
+        gem.setImageSrc("mvre/media/images/gemUV_color.jpg");
+        var m = new ModelLoader()
+        m.loadModel(gl, gem, "mvre/models/gem_test.obj");
+        gem.translate(0,0,-4);
+        gem.setParent(system);
+        this.environment.addNode(gem);
         this.enablePhysics();
-        system.setPhysicsWorld(this.physicsWorld);
+        gem.setPhysicsWorld(this.physicsWorld);
+
+        this.environment.addNode(system);
         return system;
     }
 
@@ -133,7 +143,6 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
 
         //glmatrix.mat4.identity(moon.tMatrix);
         //moon.translate(0, 3*Math.sin(-moon.curtim/90) ,3*Math.cos(-moon.curtim/90));
-        system.rotate(0.05, glmatrix.vec3.fromValues(1.0,1.0,1.0));
         //moon.curtim++;
 
         //call update from base class, should always be the last function in the game

@@ -16,8 +16,8 @@ found in the LICENSE file.
  * become usable in the engine.
  */
 
-define( ['Environment', 'glmatrix', 'samples', 'polyfill', 'Game', 'renderer'],
-    function (Environment, glmatrix, samples, polyfill, Game, renderer) {
+define( ['Environment', 'glmatrix', 'samples', 'polyfill', 'Game', 'renderer', 'stats'],
+    function (Environment, glmatrix, samples, polyfill, Game, renderer, stats) {
 
     "use strict";
 
@@ -201,6 +201,21 @@ define( ['Environment', 'glmatrix', 'samples', 'polyfill', 'Game', 'renderer'],
     scenegraph = game.init(gl, world);
 
 
+    //temp, remove
+//
+  //
+    //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        var stat = new WGLUStats(gl, true);
+
+
+
     /**
      * Render loop for engine
      * @param time
@@ -247,7 +262,7 @@ define( ['Environment', 'glmatrix', 'samples', 'polyfill', 'Game', 'renderer'],
                 gl.viewport(0, 0, webglCanvas.width, webglCanvas.height);
                 // It's best to use our own projection matrix in this case, but we can use the left eye's view matrix
                 glmatrix.mat4.perspective(projectionMat, Math.PI*0.4, webglCanvas.width / webglCanvas.height, 0.1, 1024.0);
-                render(world, gl, projectionMat, frameData.leftViewMatrix);
+                render(world, gl, projectionMat, frameData.leftViewMatrix, stat);
                 //console.log(frameData.leftViewMatrix.toString());
                 //console.log(projectionMat.toString());
 

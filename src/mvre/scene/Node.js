@@ -20,8 +20,8 @@ define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent', 'TextureCompon
 
         //create base component for mesh information
         this.addComponent(new MeshComponent('Mesh'));
-        this.addComponent(new TextureComponent('Texture'));
-        this.addComponent(new PhysicsComponent('physics'));
+        //this.addComponent(new TextureComponent('Texture'));
+        //this.addComponent(new PhysicsComponent('physics'));
 
         //all other components are optional.
 
@@ -159,6 +159,10 @@ define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent', 'TextureCompon
 
     Node.prototype.setDrawable = function(b){
         this.drawable = b;
+    }
+
+    Node.prototype.render = function(gl){
+        gl.drawArrays(gl.TRIANGLES, 0, this.components.MeshComponent.vertices.length/3);
     }
 
     return Node;
