@@ -22,7 +22,7 @@ Currently, this is an extremely alpha demo of webvr using webgl 2.0. The demo dr
 ## Completed Features
 * Validation of Webgl 2.0 support in WebVR
 * Scenegraph - single parent, multiple child graph
-* Wavefront .OBJ support, ported from the java version present in Computer __Graphics Programming in OpenGL with Java__ by Scott Gordon and John Clevenger
+* Wavefront .OBJ support, ported from the java version present in __Computer Graphics Programming in OpenGL with Java__ by Scott Gordon and John Clevenger
 
 ## Future Work
 * Lighting and Shadows - lighting and shadows are not currently in the scope of this project. The original purpose was to identify and create a simple to use engine for mobile VR. It's emphasis is on checking the current state of WebVR. Lighting is an important engine feature, but does not add to the research being done.
