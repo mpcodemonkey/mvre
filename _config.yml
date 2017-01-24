@@ -1,0 +1,8 @@
+title: MVRE
+description: A mobile virtual reality game engine based on WebGL and WebVR
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-time-machine
+
+gems:
+  - jekyll-mentions
