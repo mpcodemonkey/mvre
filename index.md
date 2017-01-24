@@ -14,12 +14,19 @@ Currently, this is an extremely alpha demo of webvr using webgl 2.0. The demo dr
 
 ## Planned Features
 * 3D Audio
-* Physics
-* .OBJ support
+
+## In-progress Features
+* Physics - gravity is present, collision detection currently underway. Cannon.js used for physics
+* HUD - based on wglu-stats.js made by Brandon Jones
 
 ## Completed Features
 * Validation of Webgl 2.0 support in WebVR
-* Simple Scenegraph
+* Scenegraph - single parent, multiple child graph
+* Wavefront .OBJ support, ported from the java version present in Computer __Graphics Programming in OpenGL with Java__ by Scott Gordon and John Clevenger
+
+## Future Work
+* Lighting and Shadows - lighting and shadows are not currently in the scope of this project. The original purpose was to identify and create a simple to use engine for mobile VR. It's emphasis is on checking the current state of WebVR. Lighting is an important engine feature, but does not add to the research being done.
+* Skeletal animation - Andrea Venuta provides a wonderful explanation [here](http://veeenu.github.io/2014/05/09/implementing-skeletal-animation.html) on how skeletal animation works conceptually, and provides some code that can be used as a basis for animation in this engine. Given the time, I would love to work on finishing this.
 
 ## Notes
 Game engine development is hard but rewarding. Never let the difficulty of a project be a roadblock that turns you away.
