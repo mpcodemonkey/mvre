@@ -36,6 +36,7 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
     var system = null
     var hud = null;
     var gem = null;
+    var time = 0;
 
     /**
      * This is where the initial Scenegraph and all control logic
@@ -116,10 +117,20 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
 
 
         hud = new HUD("HUD");
-        hud.setText("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG");
-        hud.build(gl);
+        hud.setText("LIVES - 3");
         hud.setParent(system);
+        this.enablePhysics();
+        hud.build(gl);
+        hud.translate(-0.4, -0.4, -0.5);
         this.environment.addNode(hud);
+
+        var hud2 = new HUD("energy");
+        hud2.setText("ENERGY - 100 PERCENT");
+        hud2.setParent(system);
+        hud2.translate(-0.4, -0.3, -0.5);
+        hud2.build(gl);
+        this.environment.addNode(hud2);
+
 
         gem = new Node("gem");
         gem.components.TextureComponent = new TextureComponent("texture");
@@ -128,11 +139,10 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
         gem.setImageSrc("mvre/media/images/gemUV_color.jpg");
         var m = new ModelLoader()
         m.loadModel(gl, gem, "mvre/models/gem_test.obj");
+        gem.setPhysicsWorld(this.physicsWorld);
         gem.translate(0,0,-4);
         gem.setParent(system);
         this.environment.addNode(gem);
-        this.enablePhysics();
-        gem.setPhysicsWorld(this.physicsWorld);
 
         this.environment.addNode(system);
         return system;
@@ -142,8 +152,10 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
     Game.prototype.update = function (delta){
 
         //glmatrix.mat4.identity(moon.tMatrix);
-        //moon.translate(0, 3*Math.sin(-moon.curtim/90) ,3*Math.cos(-moon.curtim/90));
+        //hud.rotate(0.9, glmatrix.vec3.fromValues(0,0,1));
         //moon.curtim++;
+        //hud.translate(0.001, 0, 0);
+        gem.translate(0.1,0,0);
 
         //call update from base class, should always be the last function in the game
         BaseGame.prototype.update.call(this, delta);

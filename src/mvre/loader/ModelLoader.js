@@ -95,8 +95,9 @@ define('ModelLoader', ['glmatrix'],function (glmatrix){
 
                         //calculate min/max vertex values for bounding box/sphere
                         var testPoint = glmatrix.vec3.fromValues(vertexValues[vertRef], vertexValues[vertRef + 1], vertexValues[vertRef + 2]);
-                        if(self.min == null && self.max == null){
-                            self.min = self.max = testPoint;
+                        if(self.min == null || self.max == null){
+                            self.min = glmatrix.vec3.fromValues(testPoint[0], testPoint[1], testPoint[2]);
+                            self.max = glmatrix.vec3.fromValues(testPoint[0], testPoint[1], testPoint[2]);
                         }
 
                         if ( testPoint[0] < self.min[0] ) self.min[0]  = testPoint[0] ;

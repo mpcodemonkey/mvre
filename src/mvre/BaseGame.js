@@ -7,6 +7,7 @@ define('BaseGame', ['cannon'],function (cannon){
         this.environment = Environment;
         this.physicsEnabled = false;
         this.physicsWorld = null;
+        this.lastTime = null;
     }
 
     BaseGame.prototype.init = function(gl){
@@ -18,7 +19,7 @@ define('BaseGame', ['cannon'],function (cannon){
     BaseGame.prototype.enablePhysics = function(){
         this.physicsEnabled = true;
         this.physicsWorld = new CANNON.World();
-        this.physicsWorld.gravity.set(0,-.000000001,0); //default gravity, in m/s^2
+        this.physicsWorld.gravity.set(0,-9.82,0); //default gravity, in m/s^2
         //todo: fix delta value used for stepping function. Waaaaay too big.
 
     }
@@ -44,8 +45,13 @@ define('BaseGame', ['cannon'],function (cannon){
         }
     }
 
-    BaseGame.prototype._updatePhysics = function(delta){
-        this.physicsWorld.step(delta);
+    BaseGame.prototype._updatePhysics = function(time){
+        if(this.lastTime !== undefined) {
+            var dt = (time - this.lastTime) / 1000;
+        }
+        this.physicsWorld.step(1/60.0, dt, 3);
+        this.lastTime = time;
+
 
         //todo: create line cast for camera, check if intersects with object for teleport
     }
