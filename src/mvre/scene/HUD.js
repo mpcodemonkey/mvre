@@ -223,7 +223,7 @@ define('HUD',['Node', 'glmatrix'], function(Node, glmatrix) {
         glmatrix.mat4.fromTranslation(this.tMatrix, [-0.5, -0.3, -0.5]);
         glmatrix.mat4.scale(this.tMatrix, this.tMatrix, [0.2, 0.2, 0.2]);
         glmatrix.mat4.rotateX(this.tMatrix, this.tMatrix, 0.0);
-        glmatrix.mat4.multiply(this.tMatrix, gl.viewMatrix, this.tMatrix);
+        //glmatrix.mat4.multiply(this.tMatrix, gl.viewMatrix, this.tMatrix);
         glmatrix.mat4.multiply(matrix, this.tMatrix, this.textMatrix);
 
         gl.uniform4f(this.colorUniform, r, g, b, a);

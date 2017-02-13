@@ -122,12 +122,12 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
         this.environment.addNode(hud);
 
         gem = new Node("gem");
-        gem.components.TextureComponent = new TextureComponent("texture");
+        //gem.components.TextureComponent = new TextureComponent("texture");
         gem.components.PhysicsComponent = new PhysicsComponent("physics");
 
         gem.setImageSrc("mvre/media/images/gemUV_color.jpg");
         var m = new ModelLoader()
-        m.loadModel(gl, gem, "mvre/models/gem_test.obj");
+        m.loadModel(gl, gem, "mvre/models/sphere.obj");
         gem.translate(0,0,-4);
         gem.setParent(system);
         this.environment.addNode(gem);
