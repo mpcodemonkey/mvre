@@ -87,6 +87,25 @@ define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent', 'TextureCompon
     Node.prototype.translate = function (x, y, z) {
         var translateVector = glmatrix.vec3.fromValues(x, y, z);
         glmatrix.mat4.translate(this.tMatrix, this.tMatrix, translateVector);
+
+        //translate physics body if physics is enabled
+        if(typeof this.components.PhysicsComponent != "undefined"){
+
+            //todo: fix order of physics object/mesh creation so this doesn't need to happen
+            var pos = glmatrix.vec3.create();
+            glmatrix.mat4.getTranslation(pos, this.tMatrix);
+            if(this.components.PhysicsComponent.boundingObject == null){
+                this.components.PhysicsComponent.dirtyX = pos[0];
+                this.components.PhysicsComponent.dirtyY = pos[1];
+                this.components.PhysicsComponent.dirtyZ = pos[2];
+            }
+            else{
+                this.components.PhysicsComponent.boundingObject.position.x = pos[0];
+                this.components.PhysicsComponent.boundingObject.position.y = pos[1];
+                this.components.PhysicsComponent.boundingObject.position.z = pos[2];
+            }
+
+        }
     }
 
     Node.prototype.rotate = function (radians, axis) {
