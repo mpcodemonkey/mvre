@@ -91,7 +91,6 @@ define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent', 'TextureCompon
         //translate physics body if physics is enabled
         if(typeof this.components.PhysicsComponent != "undefined"){
 
-            //todo: fix order of physics object/mesh creation so this doesn't need to happen
             var pos = glmatrix.vec3.create();
             glmatrix.mat4.getTranslation(pos, this.tMatrix);
             if(this.components.PhysicsComponent.boundingObject == null){
@@ -110,6 +109,40 @@ define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent', 'TextureCompon
 
     Node.prototype.rotate = function (radians, axis) {
         glmatrix.mat4.rotate(this.rMatrix, this.rMatrix, radians, axis);
+
+        if(typeof this.components.PhysicsComponent != "undefined" && this.components.PhysicsComponent.boundingObject !== null){
+            let x = radians * axis[0];
+            let y = radians * axis[1];
+            let z = radians * axis[2];
+            let tmpQuat = this.components.PhysicsComponent.boundingObject.quaternion;
+            let glQuat = glmatrix.quat.fromValues(tmpQuat.x, tmpQuat.y, tmpQuat.z, tmpQuat.w);
+            glmatrix.quat.rotateX(glQuat, glQuat, x);
+            glmatrix.quat.rotateY(glQuat, glQuat, y);
+            glmatrix.quat.rotateZ(glQuat, glQuat, z);
+
+            //copy values back into quaternion
+            tmpQuat.x = glQuat[0];
+            tmpQuat.y = glQuat[1];
+            tmpQuat.z = glQuat[2];
+            tmpQuat.w = glQuat[3];
+        }
+    }
+
+    Node.prototype.rotateXYZ = function (x, y, z, radians) {
+        let xAxis = glmatrix.vec3.fromValues(1, 0, 0);
+        let yAxis = glmatrix.vec3.fromValues(0, 1, 0);
+        let zAxis = glmatrix.vec3.fromValues(0, 0, 1);
+        glmatrix.mat4.rotateX(this.rMatrix, this.rMatrix, x);
+        glmatrix.mat4.rotateY(this.rMatrix, this.rMatrix, y);
+        glmatrix.mat4.rotateZ(this.rMatrix, this.rMatrix, z);
+
+        if(typeof this.components.PhysicsComponent != "undefined"){
+            let tmpQuat = this.components.PhysicsComponent.boundingObject.quaternion;
+            let glQuat = glmatrix.quat.fromValues(tmpQuat.x, tmpQuat.y, tmpQuat.z, tmpQuat.w);
+            glmatrix.quat.rotateX(glQuat, glQuat, x);
+            glmatrix.quat.rotateY(glQuat, glQuat, y);
+            glmatrix.quat.rotateZ(glQuat, glQuat, z);
+        }
     }
 
     Node.prototype.scale = function (x, y, z) {

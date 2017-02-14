@@ -19,7 +19,7 @@ define(['Environment', 'Skybox','glmatrix', 'Cube'], function(Environment, Skybo
         thingsToRender.forEach(function(renderable){
             if(renderable.isDrawable()){
                 gl.useProgram(renderable.program);
-                gl.frontFace(gl.CCW);
+                gl.frontFace(gl.CW);
 
                 gl.uniformMatrix4fv(renderable.projectionMat, false, pMat);
                 gl.uniformMatrix4fv(renderable.modelViewMat, false, vMat);

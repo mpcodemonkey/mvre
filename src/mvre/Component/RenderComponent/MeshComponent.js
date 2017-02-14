@@ -17,10 +17,12 @@ define('MeshComponent', [], function(){
         this.vertexBuffer = null;
         this.indexBuffer = null;
         this.vertexPosition = null;
+        this.colorPosition = null;
         this.indexCount = 0;
+        this.color = [1, 0, 0, 1];
 
         this.VShaderAttributes = [
-            "in vec3 a_Position;"
+            "in vec3 a_Position;",
         ].join("\n");
 
         this.VShaderOutput = [
@@ -32,7 +34,7 @@ define('MeshComponent', [], function(){
         ].join("\n");
 
         this.FShaderAttributes = [
-            ""
+            "uniform vec4 u_color;"
         ].join("\n");
 
         this.FShaderOutput = [
@@ -40,7 +42,7 @@ define('MeshComponent', [], function(){
         ].join("\n");
 
         this.FShaderMain = [
-            "outColor = vec4(1.0,0.0,0.0,1.0);"
+            "outColor = u_color;"
         ].join("\n");
     };
 
@@ -53,6 +55,7 @@ define('MeshComponent', [], function(){
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
         this.vertexPosition = gl.getAttribLocation(program, 'a_Position');
+        this.colorPosition = gl.getUniformLocation(program, "u_color");
         gl.vertexAttribPointer(this.vertexBuffer, 3, gl.FLOAT, false, 0, 0);
 
         //if the object uses indices for drawing
@@ -72,7 +75,14 @@ define('MeshComponent', [], function(){
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
         gl.vertexAttribPointer(this.vertexPosition, 3, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(this.vertexPosition);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+        gl.uniform4fv(this.colorPosition, new Float32Array(this.color));
+        if(this.indices.length > 0){
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+        }
+    }
+
+    MeshComponent.prototype.setColor = function(r, g, b, a){
+        this.color = [r, g, b, a];
     }
 
     return MeshComponent;

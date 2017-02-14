@@ -9,12 +9,15 @@ define('PhysicsComponent', ['glmatrix', 'cannon'], function(glmatrix, cannon){
     //normals: O
 
     var PhysicsComponent = function(){
-        this.physicsBody = null;
         //used for bounding box calculation later
         this.min = null;
         this.max = null;
         this.physicsWorld = null;
-        this.boundingObject = null
+        this.boundingObject = null;
+        this.collisionResponse = false;
+        this.mass = 0;
+
+        this.boundingType = "box";
 
         this.VShaderAttributes = [
             ""
@@ -48,13 +51,24 @@ define('PhysicsComponent', ['glmatrix', 'cannon'], function(glmatrix, cannon){
             this._computeMinMax(node);
         }
 
-        var shape = new CANNON.Box(new CANNON.Vec3(
-            (this.max[0] - this.min[0]) / 2,
-            (this.max[1] - this.min[1]) / 2,
-            (this.max[2] - this.min[2]) / 2
-        ));
 
-        this.boundingObject = new CANNON.Body({mass: 5000});
+        var shape = null;
+
+        if(this.boundingType === "sphere"){
+            var radius = this.max[0] - this.min[0];
+            radius = radius < this.max[1] - this.min[1] ? this.max[1] - this.min[1] : radius;
+            radius = radius < this.max[2] - this.min[2] ? this.max[2] - this.min[2] : radius;
+            shape = new CANNON.Sphere(radius);
+        }else{
+            shape = new CANNON.Box(new CANNON.Vec3(
+                (this.max[0] - this.min[0]) / 2,
+                (this.max[1] - this.min[1]) / 2,
+                (this.max[2] - this.min[2]) / 2
+            ));
+        }
+
+
+        this.boundingObject = new CANNON.Body({mass: this.mass});
         this.boundingObject.addShape(shape);
         var pos = glmatrix.vec3.create();
         glmatrix.mat4.getTranslation(pos, node.tMatrix);
@@ -68,10 +82,20 @@ define('PhysicsComponent', ['glmatrix', 'cannon'], function(glmatrix, cannon){
             this.boundingObject.position.y = pos[1];
             this.boundingObject.position.z = pos[2];
         }
+
+        //get rotation information from the node's rotation matrix, convert to quat
+        var rotationQuat = glmatrix.quat.create();
+        glmatrix.mat4.getRotation(rotationQuat, node.rMatrix);
+        this.boundingObject.quaternion.x = rotationQuat[0];
+        this.boundingObject.quaternion.y = rotationQuat[1];
+        this.boundingObject.quaternion.z = rotationQuat[2];
+        this.boundingObject.quaternion.w = rotationQuat[3];
+
+        //compute the axis-aligned bounding box for the given object
         this.boundingObject.computeAABB();
         // disable collision response so objects don't move when they collide
         // against each other
-        this.boundingObject.collisionResponse = false;
+        this.boundingObject.collisionResponse = this.collisionResponse;
 
         this._addToPhysicsWorld();
 
@@ -99,14 +123,29 @@ define('PhysicsComponent', ['glmatrix', 'cannon'], function(glmatrix, cannon){
     }
 
     PhysicsComponent.prototype.apply = function(gl, node){
+        //get quat, overwrite rotation matrix(objects with not physics rotation should be fine)
+        let tmpQuat = glmatrix.quat.fromValues(this.boundingObject.quaternion.x, this.boundingObject.quaternion.y, this.boundingObject.quaternion.z, this.boundingObject.quaternion.w);
+        glmatrix.mat4.identity(node.rMatrix);
+        glmatrix.mat4.fromQuat(node.rMatrix, tmpQuat)
+
         glmatrix.mat4.identity(node.tMatrix);
-        //node.translate(0,0,-4);
         node.translate(this.boundingObject.position.x, this.boundingObject.position.y, this.boundingObject.position.z);
-        //console.log(pos);
     }
 
     PhysicsComponent.prototype._addToPhysicsWorld = function(node){
         this.physicsWorld.addBody(this.boundingObject);
+    }
+
+    PhysicsComponent.prototype.setCollisionResponse = function(b){
+        this.collisionResponse = b;
+    }
+
+    PhysicsComponent.prototype.setMass = function(m){
+        this.mass = m;
+    }
+
+    PhysicsComponent.prototype.setBoundingType = function(type){
+        this.boundingType = type;
     }
 
     return PhysicsComponent;

@@ -11,7 +11,7 @@ define('HUD',['Node', 'glmatrix'], function(Node, glmatrix) {
 
         //define mesh vertex and fragment shaders
         this.components.MeshComponent.VShaderAttributes = [
-            "in vec2 a_Position;",
+            "in vec3 a_Position;",
         ].join("\n");
 
         this.components.MeshComponent.VShaderOutput = [
@@ -19,7 +19,7 @@ define('HUD',['Node', 'glmatrix'], function(Node, glmatrix) {
         ].join("\n");
 
         this.components.MeshComponent.VShaderMain = [
-            "gl_Position = projectionMat * modelViewMat * vec4( a_Position, 0.0, 1.0 );"
+            "gl_Position = projectionMat * modelViewMat * vec4( a_Position, 1.0 );"
         ].join("\n");
 
         this.components.MeshComponent.FShaderAttributes = [
@@ -44,16 +44,8 @@ define('HUD',['Node', 'glmatrix'], function(Node, glmatrix) {
         this.kerning = 2.0; //letter spacing
         this.characters = {};
         this.text = "";
-
-        // Hard coded because it doesn't change:
-        // Scale by 0.075 in X and Y
-        // Translate into upper left corner w/ z = 0.02
-        this.textMatrix = new Float32Array([
-            0.075, 0, 0, 0,
-            0, 0.075, 0, 0,
-            0, 0, 1, 0,
-            -0.3625, 0.3625, 0.02, 1
-        ]);
+        this.segmentVertices = [];
+        this.gl = null;
 
 
     }
@@ -61,32 +53,19 @@ define('HUD',['Node', 'glmatrix'], function(Node, glmatrix) {
     HUD.prototype = Object.create(Node.prototype);
 
     HUD.prototype.defineSegment = function(id, left, top, right, bottom) {
-         var idx = this.components.MeshComponent.vertices.length / 2;
-         this.components.MeshComponent.vertices.push(
-             left, top,
-             right, top,
-             right, bottom,
-             left, bottom);
-
-         this.components.MeshComponent.segmentIndices[id] = [
-             idx, idx + 2, idx + 1,
-             idx, idx + 3, idx + 2];
+        this.segmentVertices[id] = [left, top, 0, right, top, 0, left, bottom, 0, right, top, 0, right, bottom, 0, left, bottom, 0];
     }
 
     HUD.prototype.defineCharacter = function(c, segments) {
-         var character = {
-             character: c,
-             offset: this.components.MeshComponent.indices.length * 2,
-             count: 0
-         };
+        var character = {
+            character: c,
+            vertices: []
+        };
 
-         for (var i = 0; i < segments.length; ++i) {
-             var idx = segments[i];
-             var segment = this.components.MeshComponent.segmentIndices[idx];
-             character.count += segment.length;
-             this.components.MeshComponent.indices.push.apply(this.components.MeshComponent.indices, segment);
-         }
-         this.characters[c] = character;
+        for (var i = 0; i < segments.length; ++i) {
+            character.vertices = character.vertices.concat(this.segmentVertices[segments[i]])
+        }
+        this.characters[c] = character;
 
     }
 
@@ -101,8 +80,14 @@ define('HUD',['Node', 'glmatrix'], function(Node, glmatrix) {
          |-2-|
 
          */
+        this.gl = gl;
+
+        //initial position and scale of HUD, can be altered by user
+        this.translate(-0.7, -0.3, -0.5);
+        this.scale(0.025, 0.025, 0.025);
 
         this.defineSegment(0, -1, 1, this.width, 1-this.thickness);
+
         this.defineSegment(1, -1, this.thickness*0.5, this.width, -this.thickness*0.5);
         this.defineSegment(2, -1, -1+this.thickness, this.width, -1);
         this.defineSegment(3, -1, 1, -1+this.thickness, -this.thickness*0.5);
@@ -186,55 +171,18 @@ define('HUD',['Node', 'glmatrix'], function(Node, glmatrix) {
         this.defineCharacter(" ", []);
         this.defineCharacter("_", [2]); // Used for undefined characters
 
+        this._buildHUDVertices();
 
-
-        this.components.MeshComponent.vertexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.components.MeshComponent.vertexBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.components.MeshComponent.vertices), gl.DYNAMIC_DRAW);
-
-        this.components.MeshComponent.indexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.components.MeshComponent.indexBuffer);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.components.MeshComponent.indices), gl.STATIC_DRAW);
-
-        this.program = createProgramFromComponents(this, gl);
-
-        this.vertexPosition = gl.getAttribLocation(this.program, 'a_Position');
-        gl.vertexAttribPointer(this.vertexPosition, 2, gl.FLOAT, false, 8, 0);
-
-        //get positions for model, view, and color matrices
-        this.projectionMat = gl.getUniformLocation(this.program, "projectionMat");
-        this.modelViewMat = gl.getUniformLocation(this.program, "modelViewMat");
+        Node.prototype.build.call(this, gl);
         this.colorUniform = gl.getUniformLocation(this.program, "color");
 
         this.setDrawable(true);
     }
 
-    HUD.prototype.render = function(gl){
-
-
-
-        var matrix = new Float32Array(16);
-        var final = glmatrix.mat4.create();
-        var r = 1.0;
-        var g = 1.0;
-        var b = 0.0;
-        var a = 1.0;
-
-        glmatrix.mat4.fromTranslation(this.tMatrix, [-0.5, -0.3, -0.5]);
-        glmatrix.mat4.scale(this.tMatrix, this.tMatrix, [0.2, 0.2, 0.2]);
-        glmatrix.mat4.rotateX(this.tMatrix, this.tMatrix, 0.0);
-        glmatrix.mat4.multiply(matrix, this.tMatrix, this.textMatrix);
-
-        gl.uniform4f(this.colorUniform, r, g, b, a);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.components.MeshComponent.vertexBuffer);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.components.MeshComponent.indexBuffer);
-
-        gl.enableVertexAttribArray(this.vertexPosition);
-        gl.vertexAttribPointer(this.vertexPosition, 2, gl.FLOAT, false, 8, 0);
-
+    HUD.prototype._buildHUDVertices = function(){
+        //build out final vertex set
+        var textVertices = [];
         var offset = 0;
-
         for (var i = 0; i < this.text.length; ++i) {
             var c;
             if (this.text[i] in this.characters) {
@@ -243,21 +191,46 @@ define('HUD',['Node', 'glmatrix'], function(Node, glmatrix) {
                 c = this.characters["_"];
             }
 
-            if (c.count != 0) {
-                glmatrix.mat4.fromTranslation(final, [offset, 0, 0]);
-                glmatrix.mat4.multiply(final, matrix, final);
-
-                gl.uniformMatrix4fv(this.modelViewMat, false, final);
-                gl.drawElements(gl.TRIANGLES, c.count, gl.UNSIGNED_SHORT, c.offset);
-
+            var j = 0;
+            for(j = 0; j < c.vertices.length; j +=3){
+                textVertices.push(c.vertices[j] + offset);
+                textVertices.push(c.vertices[j+1]);
+                textVertices.push(c.vertices[j+2]);
             }
 
             offset += this.kerning;
         }
+
+        this.components.MeshComponent.vertices = textVertices;
+    }
+
+    HUD.prototype.render = function(gl){
+
+        var matrix = new Float32Array(16);
+        var r = 1.0;
+        var g = 1.0;
+        var b = 0.0;
+        var a = 1.0;
+
+        gl.uniform4f(this.colorUniform, r, g, b, a);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.components.MeshComponent.vertexBuffer);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.components.MeshComponent.indexBuffer);
+
+        gl.uniformMatrix4fv(this.modelViewMat, false, this.wMatrix);
+        gl.drawArrays(gl.TRIANGLES, 0, this.components.MeshComponent.vertices.length/3);
+
     }
 
     HUD.prototype.setText = function(words){
         this.text = words;
+    }
+
+    HUD.prototype.updateText = function(words){
+        this.text = words;
+        this._buildHUDVertices();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.components.MeshComponent.vertexBuffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(this.components.MeshComponent.vertices), this.gl.STATIC_DRAW);
     }
 
     HUD.prototype.update = function () {

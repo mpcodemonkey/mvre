@@ -19,8 +19,8 @@ define('BaseGame', ['cannon'],function (cannon){
     BaseGame.prototype.enablePhysics = function(){
         this.physicsEnabled = true;
         this.physicsWorld = new CANNON.World();
-        this.physicsWorld.gravity.set(0,-9.82,0); //default gravity, in m/s^2
-        //todo: fix delta value used for stepping function. Waaaaay too big.
+        this.physicsWorld.gravity.set(0,-9.81,0); //default gravity, in m/s^2
+        this.physicsWorld.broadphase = new CANNON.NaiveBroadphase();
 
     }
 
