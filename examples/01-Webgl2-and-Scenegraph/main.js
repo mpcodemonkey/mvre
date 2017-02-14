@@ -7,7 +7,7 @@ requirejs.config({
     paths: {
       glmatrix: './third-party/gl-matrix-min',
       scene: './mvre/SceneNode',
-      renderer: './mvre/renderer',
+      renderer: './mvre/Renderer',
       engine: './mvre/Engine',
       polyfill: './third-party/webvr-polyfill',
       samples: './third-party/vr-samples-util',
