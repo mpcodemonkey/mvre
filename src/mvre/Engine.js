@@ -16,8 +16,8 @@ found in the LICENSE file.
  * become usable in the engine.
  */
 
-define( ['Environment', 'glmatrix', 'samples', 'polyfill', 'Game', 'renderer'],
-    function (Environment, glmatrix, samples, polyfill, Game, renderer) {
+define( ['Environment', 'glmatrix', 'samples', 'polyfill', 'Game', 'renderer', 'stats'],
+    function (Environment, glmatrix, samples, polyfill, Game, renderer, stats) {
 
     "use strict";
 
@@ -200,6 +200,14 @@ define( ['Environment', 'glmatrix', 'samples', 'polyfill', 'Game', 'renderer'],
     //initialize game setup
     scenegraph = game.init(gl, world);
 
+    // Listen for click events on the canvas, which may come from something
+    // like a Cardboard viewer or other VR controller. This basic
+    // interaction mode is the baseline for all WebVR compatible devices, and
+    // should ideally always be minimally supported.
+    function onClick () {
+        game.handleInput();
+
+    }   webglCanvas.addEventListener("click", onClick, false);
 
     /**
      * Render loop for engine

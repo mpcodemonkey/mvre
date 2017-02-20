@@ -4,7 +4,7 @@
 /**
  * Created by ubufu on 9/20/2016.
  */
-define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", "glmatrix", "TranslationController", "RotationController", "ModelLoader"],
+define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", "glmatrix", "TranslationController", "RotationController", "ModelLoader", "HUD", 'TextureComponent', 'PhysicsComponent'],
     function (
     BaseGame,
     Environment,
@@ -15,7 +15,10 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
     glmatrix,
     TranslationController,
     RotationController,
-    ModelLoader){
+    ModelLoader,
+    HUD,
+    TextureComponent,
+    PhysicsComponent){
 
     var Game = function(Environment){
         BaseGame.call(this, Environment);
@@ -30,101 +33,67 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
      * game.
      */
 
-    var skybox = null
-    var system = null;
-    var sunRotator;
-    var sun = null;
-    var earthController = null;
-    var earth = null;
-    var earthGroup = null;
-    var child2Controller = null;
-    var moon = null;
+    var system = null
+    var hud = null;
+    var gem = null;
+    var floor = null;
+    var time = 0;
 
     /**
      * This is where the initial Scenegraph and all control logic
      * for a given application must be written.
-     * @param gl
+     * @param gl - the gl object
      */
-    Game.prototype.init = function(gl, world){
+    Game.prototype.init = function(gl){
 
-        /*
-        system = new Node();
-        system.name = "system";
-        system.translate(0,0,-4);
+        system = new Node("system");
+        system.setDrawable(false);
         this.environment.addNode(system);
 
-        skybox = new Skybox();
-        skybox.name = "bawks";
-        skybox.setImageSrc("mvre/media/images/default.jpg");
-        skybox.VSHADER_SOURCE = prototype_vshader;
-        skybox.FSHADER_SOURCE = prototype_fshader;
-        skybox.build(gl);
-        skybox.setParent(system);
-        skybox.translate(0,0,4);
-        skybox.scale(2,2,2);
-        this.environment.addNode(skybox);
-
-        sunRotator = new RotationController();
-        sunRotator.name = "sunRot";
-        sunRotator.setParent(system);
-        this.environment.addNode(sunRotator);
-
-        sun = new Cube();
-        sun.name = "sun";
-        sun.VSHADER_SOURCE = prototype_vshader;
-        sun.FSHADER_SOURCE = prototype_fshader;
-        sun.setImageSrc("mvre/media/images/default.jpg");
-        sun.build(gl);
-        sun.setParent(sunRotator);
-        this.environment.addNode(sun);
-
-        earthController = new RotationController();
-        earthController.name = "childController";
-        earthController.setDefaultRotationRate(.005);
-        earthController.setParent(system);
-        this.environment.addNode(earthController);
-
-        earthGroup = new Node();
-        earthGroup.name = "Earth Group";
-        earthGroup.setParent(earthController);
-        earthGroup.translate(4,0,0);
-        this.environment.addNode(earthGroup);
-
-        earth = new Cube();
-        earth.name = "child";
-        earth.VSHADER_SOURCE = sun.VSHADER_SOURCE;
-        earth.FSHADER_SOURCE = sun.FSHADER_SOURCE;
-        earth.build(gl);
-        earth.setParent(earthGroup);
-        earth.scale(0.7,0.7,0.7);
-        this.environment.addNode(earth);
-
-        moon = new Cube();
-        moon.name = "bill";
-        moon.VSHADER_SOURCE = sun.VSHADER_SOURCE;
-
-        moon.FSHADER_SOURCE = sun.FSHADER_SOURCE;
-        moon.setImageSrc("mvre/media/images/default.jpg")
-        moon.build(gl);
-        moon.scale(.3,.3,.3);
-        moon.setParent(earthGroup);
-        this.environment.addNode(moon);
-        */
 
 
+        hud = new HUD("HUD");
+        hud.setText("HEIGHT- 0M");
+        //hud.setColor(0,1,0,1);
+        hud.build(gl);
+        hud.setParent(system);
+        this.environment.addNode(hud);
 
-        system = new Cube("system");
-        system.name = "system";
-        //system.VSHADER_SOURCE = prototype_vshader;
-        //system.FSHADER_SOURCE = prototype_fshader;
-        system.setImageSrc("mvre/media/images/gemUV_color.jpg");
-        //system.build(gl);
-        var  m = new ModelLoader();
-        m.loadModel(gl, system, "mvre/models/gem_test.obj");
-        system.translate(0,0,-4);
-        this.environment.addNode(system);
+        gem = new Node("gem");
+        gem.components.TextureComponent = new TextureComponent("texture");
+        gem.components.PhysicsComponent = new PhysicsComponent("physics");
+        gem.components.PhysicsComponent.setCollisionResponse(true);
+        gem.components.PhysicsComponent.setMass(.01);
+        gem.components.PhysicsComponent.setBoundingType("sphere");
+        gem.components.MeshComponent.setColor(0,1,0,1);
+
+        gem.setImageSrc("mvre/media/images/earth.jpg");
+        var m = new ModelLoader();
+        m.loadModel(gl, gem, "mvre/models/testSphere.obj");
+        gem.translate(-1,8,-10);
+        gem.setParent(system);
+        this.environment.addNode(gem);
         this.enablePhysics();
-        system.setPhysicsWorld(this.physicsWorld);
+        gem.setPhysicsWorld(this.physicsWorld);
+
+
+        floor = new Node("floor");
+        floor.components.PhysicsComponent = new PhysicsComponent("physics");
+        floor.components.PhysicsComponent.setCollisionResponse(true);
+
+        floor.components.TextureComponent = new TextureComponent("texture");
+        floor.setImageSrc("mvre/media/images/crate.jpg");
+        //floor.components.PhysicsComponent.setPlane(true);
+        var m = new ModelLoader();
+        floor.rotate(-.7, glmatrix.vec3.fromValues(0,0,1));
+        floor.translate(0,-4,-10);
+        //floor.scale(0.5,1,0.5);
+        floor.setPhysicsWorld(this.physicsWorld);
+        m.loadModel(gl, floor, "mvre/models/floor.obj");
+        floor.setParent(system);
+        this.environment.addNode(floor);
+
+        this.environment.addNode(system);
         return system;
     }
 
@@ -133,13 +102,19 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
 
         //glmatrix.mat4.identity(moon.tMatrix);
         //moon.translate(0, 3*Math.sin(-moon.curtim/90) ,3*Math.cos(-moon.curtim/90));
-        system.rotate(0.05, glmatrix.vec3.fromValues(1.0,1.0,1.0));
         //moon.curtim++;
 
+        time ++;
+        time = time % 3600;
+
         //call update from base class, should always be the last function in the game
+        floor.rotate(1/20 * Math.sin(time/10), glmatrix.vec3.fromValues(0,0,1));
+        if(gem.components.PhysicsComponent.boundingObject !== null)
+            hud.updateText("HEIGHT- " + gem.components.PhysicsComponent.boundingObject.position.y.toFixed(2) + "M")
+        //if(gem.components.PhysicsComponent.boundingObject !== null)
+        //    console.log(gem.components.PhysicsComponent.boundingObject.position.x, gem.components.PhysicsComponent.boundingObject.position.y, gem.components.PhysicsComponent.boundingObject.position.z);
+
         BaseGame.prototype.update.call(this, delta);
-
-
     }
 
     return Game;

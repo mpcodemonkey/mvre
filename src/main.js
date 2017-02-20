@@ -5,6 +5,7 @@
 requirejs.config({
   baseUrl: '',
     paths: {
+      stats: './third-party/wglu-stats',
       glmatrix: './third-party/gl-matrix-min',
       Skybox: './mvre/scene/Skybox',
       Cube: './mvre/scene/Cube',
@@ -26,9 +27,9 @@ requirejs.config({
       samples: './third-party/vr-samples-util',
       BaseGame: './mvre/BaseGame',
       Game: 'Game',
-      EventEmitter: './third-party/EventEmitter.min',
       ModelLoader: './mvre/loader/ModelLoader',
       JSONLoader: './mvre/loader/JSONLoader',
+      HUD: './mvre/scene/HUD',
       cuon: './third-party/cuon-utils'
     }
 });

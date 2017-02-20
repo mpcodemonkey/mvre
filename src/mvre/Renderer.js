@@ -3,7 +3,7 @@
  */
 define(['Environment', 'Skybox','glmatrix', 'Cube'], function(Environment, Skybox, glmatrix, Cube) {
 
-    this.render = function (world, gl, pMat, vMat) {
+    this.render = function (world, gl, pMat, vMat, stat) {
         /**
          * This is where actual rendering will take
          * place. The current idea is to have a copy
@@ -14,11 +14,12 @@ define(['Environment', 'Skybox','glmatrix', 'Cube'], function(Environment, Skybo
          **/
 
         var thingsToRender = world.getEnvironmentAsList();
+        gl.viewMatrix = vMat;
 
         thingsToRender.forEach(function(renderable){
             if(renderable.isDrawable()){
                 gl.useProgram(renderable.program);
-                gl.frontFace(gl.CCW);
+                gl.frontFace(gl.CW);
 
                 gl.uniformMatrix4fv(renderable.projectionMat, false, pMat);
                 gl.uniformMatrix4fv(renderable.modelViewMat, false, vMat);
@@ -29,7 +30,9 @@ define(['Environment', 'Skybox','glmatrix', 'Cube'], function(Environment, Skybo
                     component.apply(gl, renderable);
                 })
 
+                renderable.render(gl);
 
+                /*
                 if(renderable instanceof Skybox){
                     gl.disable(gl.DEPTH_TEST);
                     gl.frontFace(gl.CW);
@@ -41,7 +44,17 @@ define(['Environment', 'Skybox','glmatrix', 'Cube'], function(Environment, Skybo
                     //gl.drawElements(gl.TRIANGLES, renderable.components.MeshComponent.indexCount, gl.UNSIGNED_SHORT, 0);
                     gl.drawArrays(gl.TRIANGLES, 0, renderable.components.MeshComponent.vertices.length/3);
                 }
+                */
             }
+            /*
+            this.statsMat = glmatrix.mat4.create();
+            glmatrix.mat4.fromTranslation(this.statsMat, [-0.5, -0.3, -0.5]);
+            glmatrix.mat4.scale(this.statsMat, this.statsMat, [0.1, 0.1, 0.1]);
+            glmatrix.mat4.rotateX(this.statsMat, this.statsMat, 0.0);
+            glmatrix.mat4.multiply(this.statsMat, vMat, this.statsMat);
+            console.log(vMat);
+            stat.render(pMat, this.statsMat);
+            */
         });
 
     }
