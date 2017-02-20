@@ -56,5 +56,9 @@ define('BaseGame', ['cannon'],function (cannon){
         //todo: create line cast for camera, check if intersects with object for teleport
     }
 
+    BaseGame.prototype.handleInput = function(){
+        console.log("Registered a click event");
+    }
+
     return BaseGame;
 });

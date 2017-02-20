@@ -42,9 +42,9 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
     /**
      * This is where the initial Scenegraph and all control logic
      * for a given application must be written.
-     * @param gl
+     * @param gl - the gl object
      */
-    Game.prototype.init = function(gl, world){
+    Game.prototype.init = function(gl){
 
         system = new Node("system");
         system.setDrawable(false);
