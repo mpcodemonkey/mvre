@@ -117,5 +117,13 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
         BaseGame.prototype.update.call(this, delta);
     }
 
+    // This function serves as the entry point for click and
+    // Controller events to the engine. Right now, only
+    // onClick() is supported, so only one button can
+    // be used in game
+    Game.prototype.handleInput = function(){
+
+    }
+
     return Game;
 });
