@@ -5,10 +5,13 @@
 requirejs.config({
   baseUrl: '',
     paths: {
+      Audio: './mvre/Audio',
+      AudioComponent: './mvre/Component/RenderComponent/AudioComponent',
       stats: './third-party/wglu-stats',
       glmatrix: './third-party/gl-matrix-min',
       Skybox: './mvre/scene/Skybox',
       Cube: './mvre/scene/Cube',
+      IFR: './mvre/scene/IFR',
       cannon: './third-party/cannon.min',
       Shaders: './mvre/Shaders',
       Environment: './mvre/objects/Environment',

@@ -149,7 +149,7 @@ define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent', 'TextureCompon
         glmatrix.mat4.scale(this.sMatrix, this.sMatrix, glmatrix.vec3.fromValues(x, y, z))
     }
 
-    Node.prototype.computeLocalMatrix = function(){
+    Node.prototype._computeLocalMatrix = function(){
         var tmp = glmatrix.mat4.create();
         glmatrix.mat4.mul(tmp, this.rMatrix, this.sMatrix);
         glmatrix.mat4.mul(this.lMatrix, this.tMatrix, tmp);
@@ -161,10 +161,10 @@ define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent', 'TextureCompon
 
     //from http://webglfundamentals.org/webgl/lessons/webgl-scene-graph.html
     //modified for use with glmatrix
-    Node.prototype.updateWorldMatrix = function(parent) {
+    Node.prototype._updateWorldMatrix = function(parent) {
         if (parent) {
             //compute local matrix for children nodes
-            this.computeLocalMatrix();
+            this._computeLocalMatrix();
             // parent exists, update world matrix with
             // parent world matrix
             glmatrix.mat4.mul(this.wMatrix, parent.wMatrix, this.lMatrix);
@@ -194,10 +194,10 @@ define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent', 'TextureCompon
     }
 
     Node.prototype.update = function(){
-        this.computeLocalMatrix();
+        this._computeLocalMatrix();
 
         //compute the global matrix
-        this.updateWorldMatrix(this.parent);
+        this._updateWorldMatrix(this.parent);
 
         //do the same for children
         this.children.forEach(function(child) {

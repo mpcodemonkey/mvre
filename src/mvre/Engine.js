@@ -200,6 +200,7 @@ define( ['Environment', 'glmatrix', 'samples', 'polyfill', 'Game', 'renderer', '
     //initialize game setup
     scenegraph = game.init(gl, world);
 
+
     // Listen for click events on the canvas, which may come from something
     // like a Cardboard viewer or other VR controller. This basic
     // interaction mode is the baseline for all WebVR compatible devices, and

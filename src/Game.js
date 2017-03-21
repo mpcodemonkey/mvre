@@ -4,7 +4,7 @@
 /**
  * Created by ubufu on 9/20/2016.
  */
-define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", "glmatrix", "TranslationController", "RotationController", "ModelLoader", "HUD", 'TextureComponent', 'PhysicsComponent'],
+define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", "glmatrix", "TranslationController", "RotationController", "ModelLoader", "HUD", 'TextureComponent', 'PhysicsComponent', 'IFR', 'AudioComponent'],
     function (
     BaseGame,
     Environment,
@@ -18,7 +18,9 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
     ModelLoader,
     HUD,
     TextureComponent,
-    PhysicsComponent){
+    PhysicsComponent,
+    IFR,
+    AudioComponent){
 
     var Game = function(Environment){
         BaseGame.call(this, Environment);
@@ -37,6 +39,7 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
     var hud = null;
     var gem = null;
     var floor = null;
+    var faceblock = null;
     var time = 0;
 
     /**
@@ -53,19 +56,23 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
 
 
         hud = new HUD("HUD");
-        hud.setText("HEIGHT- 0M");
-        //hud.setColor(0,1,0,1);
+        hud.setText("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG");
+        hud.components.MeshComponent.setColor(0,1,0,1);
+        hud.scale(0.5,0.5,0.5);
         hud.build(gl);
         hud.setParent(system);
         this.environment.addNode(hud);
 
         gem = new Node("gem");
         gem.components.TextureComponent = new TextureComponent("texture");
-        gem.components.PhysicsComponent = new PhysicsComponent("physics");
+        gem.components.PhysicsComponent = new PhysicsComponent(gem);
         gem.components.PhysicsComponent.setCollisionResponse(true);
         gem.components.PhysicsComponent.setMass(.01);
         gem.components.PhysicsComponent.setBoundingType("sphere");
         gem.components.MeshComponent.setColor(0,1,0,1);
+        gem.components.AudioComponent = new AudioComponent("audio");
+        gem.components.AudioComponent.setSource('mvre/media/audio/wilhelm.ogg');
+        gem.components.AudioComponent.repeat(true);
 
         gem.setImageSrc("mvre/media/images/earth.jpg");
         var m = new ModelLoader();
@@ -78,12 +85,11 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
 
 
         floor = new Node("floor");
-        floor.components.PhysicsComponent = new PhysicsComponent("physics");
+        floor.components.PhysicsComponent = new PhysicsComponent(floor);
         floor.components.PhysicsComponent.setCollisionResponse(true);
 
         floor.components.TextureComponent = new TextureComponent("texture");
         floor.setImageSrc("mvre/media/images/crate.jpg");
-        //floor.components.PhysicsComponent.setPlane(true);
         var m = new ModelLoader();
         floor.rotate(-.7, glmatrix.vec3.fromValues(0,0,1));
         floor.translate(0,-4,-10);
@@ -94,6 +100,30 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
         this.environment.addNode(floor);
 
         this.environment.addNode(system);
+
+        //testing Invisible Face Rod
+        faceblock = new IFR("Invisible Face Rod");
+        faceblock.components.PhysicsComponent = new PhysicsComponent(faceblock);
+        faceblock.components.PhysicsComponent.setCollisionResponse(false);
+        faceblock.components.PhysicsComponent.setMass(1);
+        //faceblock.components.PhysicsComponent.setBoundingType("box");
+        faceblock.setPhysicsWorld(this.physicsWorld);
+        faceblock.translate(0,0,-10);
+        faceblock.setParent(system);
+        faceblock.components.AudioComponent = new AudioComponent("audio");
+        faceblock.components.AudioComponent.setSource('mvre/media/audio/orange.ogg');
+        faceblock.build(gl);
+        faceblock.components.PhysicsComponent.boundingObject.addEventListener("collide",function(e){
+            console.log("boop");
+            if(e.body.parent !== undefined) {
+                e.body.parent.components.MeshComponent.setColor(
+                    Math.random() * 0.5,
+                    Math.random() * 0.5,
+                    Math.random() * 0.5, 1.0);
+            }
+        });
+        //faceblock.setDrawable(false);
+        this.environment.addNode(faceblock);
         return system;
     }
 
@@ -110,7 +140,7 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
         //call update from base class, should always be the last function in the game
         floor.rotate(1/20 * Math.sin(time/10), glmatrix.vec3.fromValues(0,0,1));
         if(gem.components.PhysicsComponent.boundingObject !== null)
-            hud.updateText("HEIGHT- " + gem.components.PhysicsComponent.boundingObject.position.y.toFixed(2) + "M")
+            //hud.updateText("HEIGHT- " + gem.components.PhysicsComponent.boundingObject.position.y.toFixed(2) + "M")
         //if(gem.components.PhysicsComponent.boundingObject !== null)
         //    console.log(gem.components.PhysicsComponent.boundingObject.position.x, gem.components.PhysicsComponent.boundingObject.position.y, gem.components.PhysicsComponent.boundingObject.position.z);
 
@@ -122,7 +152,7 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
     // onClick() is supported, so only one button can
     // be used in game
     Game.prototype.handleInput = function(){
-
+        console.log("hello");
     }
 
     return Game;

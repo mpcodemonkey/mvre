@@ -8,7 +8,7 @@ define('PhysicsComponent', ['glmatrix', 'cannon'], function(glmatrix, cannon){
     //currently implemented:
     //normals: O
 
-    var PhysicsComponent = function(){
+    var PhysicsComponent = function(node){
         //used for bounding box calculation later
         this.min = null;
         this.max = null;
@@ -16,7 +16,7 @@ define('PhysicsComponent', ['glmatrix', 'cannon'], function(glmatrix, cannon){
         this.boundingObject = null;
         this.collisionResponse = false;
         this.mass = 0;
-
+        this.parent = node;
         this.boundingType = "box";
 
         this.VShaderAttributes = [
@@ -97,6 +97,9 @@ define('PhysicsComponent', ['glmatrix', 'cannon'], function(glmatrix, cannon){
         // against each other
         this.boundingObject.collisionResponse = this.collisionResponse;
 
+
+        //set the bounding object's parent for collision responses
+        this.boundingObject.parent = this.parent;
         this._addToPhysicsWorld();
 
     }
@@ -123,7 +126,7 @@ define('PhysicsComponent', ['glmatrix', 'cannon'], function(glmatrix, cannon){
     }
 
     PhysicsComponent.prototype.apply = function(gl, node){
-        //get quat, overwrite rotation matrix(objects with not physics rotation should be fine)
+        //get quat, overwrite rotation matrix(objects with no physics rotation should be fine)
         let tmpQuat = glmatrix.quat.fromValues(this.boundingObject.quaternion.x, this.boundingObject.quaternion.y, this.boundingObject.quaternion.z, this.boundingObject.quaternion.w);
         glmatrix.mat4.identity(node.rMatrix);
         glmatrix.mat4.fromQuat(node.rMatrix, tmpQuat)

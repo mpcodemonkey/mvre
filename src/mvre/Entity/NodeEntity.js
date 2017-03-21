@@ -19,7 +19,7 @@ define('NodeEntity',[], function(){
         //increment node count
         Node.prototype._count++;
 
-        //create empty object to hold components in
+        //create an empty object to hold components in
         this.components = {};
     }
 
@@ -30,7 +30,7 @@ define('NodeEntity',[], function(){
         // NOTE: The component must have a name property (which is defined as
         // a prototype prototype of a component function)
         if(!component.name){
-            console.log("Error: no name associated with component. Component not added");
+            console.log("Error: no name associated with the current component. The component was not added");
         }
         else{
             this.components[component.name] = component;
