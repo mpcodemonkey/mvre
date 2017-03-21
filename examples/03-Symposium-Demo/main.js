@@ -24,7 +24,7 @@ requirejs.config({
       TextureComponent: './mvre/Component/RenderComponent/TextureComponent',
       AnimationComponent: './mvre/Component/RenderComponent/AnimationComponent',
       PhysicsComponent: './mvre/Component/RenderComponent/PhysicsComponent',
-      renderer: './mvre/renderer',
+      renderer: './mvre/Renderer',
       engine: './mvre/Engine',
       polyfill: './third-party/webvr-polyfill',
       samples: './third-party/vr-samples-util',
