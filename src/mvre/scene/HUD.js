@@ -206,11 +206,11 @@ define('HUD',['Node', 'glmatrix'], function(Node, glmatrix) {
 
     HUD.prototype.render = function(gl){
 
-        var matrix = new Float32Array(16);
-        var r = 1.0;
-        var g = 1.0;
-        var b = 0.0;
-        var a = 1.0;
+        var color = this.components.MeshComponent.getColor();
+        var r = color[0];
+        var g = color[1];
+        var b = color[2];
+        var a = color[3];
 
         gl.uniform4f(this.colorUniform, r, g, b, a);
 

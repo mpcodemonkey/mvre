@@ -85,6 +85,10 @@ define('MeshComponent', [], function(){
         this.color = [r, g, b, a];
     }
 
+    MeshComponent.prototype.getColor = function(){
+        return this.color;
+    }
+
     return MeshComponent;
 
 });

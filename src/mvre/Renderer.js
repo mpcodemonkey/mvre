@@ -3,7 +3,7 @@
  */
 define(['Environment', 'Skybox','glmatrix', 'Cube'], function(Environment, Skybox, glmatrix, Cube) {
 
-    this.render = function (world, gl, pMat, vMat, stat) {
+    this.render = function (world, gl, pMat, vMat) {
         /**
          * This is where actual rendering will take
          * place. The current idea is to have a copy

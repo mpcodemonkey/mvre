@@ -81,7 +81,7 @@ define('AudioComponent', ['glmatrix', 'Audio'], function(glmatrix, Audio){
     }
 
     AudioComponent.prototype.play = function(){
-
+        this.getAudioPlayer().play(this.soundIdentifier, this.loop);
     }
 
     AudioComponent.prototype.repeat = function(b){

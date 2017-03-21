@@ -4,10 +4,12 @@
  * default cube, modified from https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Using_textures_in_WebGL
  */
 
-define('Cube',['Node'], function(Node) {
+define('Cube',['Node', 'TextureComponent'], function(Node, TextureComponent) {
 
     var Cube = function (name) {
         Node.call(this, name);
+        //cubes have a texturecomponent by default(for now)
+        this.components.TextureComponent = new TextureComponent("texture");
         this.components.MeshComponent.vertices = [
             // Front face
             -1.0, -1.0, 1.0,
@@ -95,7 +97,9 @@ define('Cube',['Node'], function(Node) {
     Cube.prototype.update = function () {
         Node.prototype.update.call(this);
     }
-
+    Cube.prototype.render =  function(gl){
+        gl.drawElements(gl.TRIANGLES, 1, gl.UNSIGNED_SHORT, 0);
+    }
 
     return Cube;
 });

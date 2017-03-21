@@ -206,7 +206,7 @@ define( ['Environment', 'glmatrix', 'samples', 'polyfill', 'Game', 'renderer', '
     // interaction mode is the baseline for all WebVR compatible devices, and
     // should ideally always be minimally supported.
     function onClick () {
-        game.handleInput();
+        game.handleInput(frameData.leftViewMatrix);
 
     }   webglCanvas.addEventListener("click", onClick, false);
 

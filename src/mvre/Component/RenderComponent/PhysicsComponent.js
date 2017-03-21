@@ -101,7 +101,6 @@ define('PhysicsComponent', ['glmatrix', 'cannon'], function(glmatrix, cannon){
         //set the bounding object's parent for collision responses
         this.boundingObject.parent = this.parent;
         this._addToPhysicsWorld();
-
     }
 
     PhysicsComponent.prototype._computeMinMax = function(node){

@@ -146,7 +146,15 @@ define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent', 'TextureCompon
     }
 
     Node.prototype.scale = function (x, y, z) {
-        glmatrix.mat4.scale(this.sMatrix, this.sMatrix, glmatrix.vec3.fromValues(x, y, z))
+        glmatrix.mat4.scale(this.sMatrix, this.sMatrix, glmatrix.vec3.fromValues(x, y, z));
+
+        if(typeof this.components.PhysicsComponent != "undefined" && this.components.PhysicsComponent.boundingObject !== null){
+            let phys = this.components.PhysicsComponent;
+            phys.boundingObject.halfExtents.x = x;
+            phys.boundingObject.halfExtents.y = y;
+            phys.boundingObject.halfExtents.z = z;
+            phys.updateConvexPolyhedronRepresentation();
+        }
     }
 
     Node.prototype._computeLocalMatrix = function(){
@@ -214,7 +222,17 @@ define('Node',['glmatrix', 'NodeEntity', 'cuon', 'MeshComponent', 'TextureCompon
     }
 
     Node.prototype.render = function(gl){
-        gl.drawArrays(gl.TRIANGLES, 0, this.components.MeshComponent.vertices.length/3);
+        if(this.name === "skybox"){
+            gl.disable(gl.DEPTH_TEST);
+            gl.frontFace(gl.CCW);
+            gl.drawArrays(gl.TRIANGLES, 0, this.components.MeshComponent.vertices.length/3);
+            gl.enable(gl.DEPTH_TEST);
+            gl.frontFace(gl.CW);
+        }
+        else{
+            gl.drawArrays(gl.TRIANGLES, 0, this.components.MeshComponent.vertices.length/3);
+        }
+
     }
 
     return Node;
