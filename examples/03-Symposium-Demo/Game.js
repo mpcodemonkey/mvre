@@ -135,6 +135,7 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
         ballHUD.setText("SHOTS TAKEN - " + ballCount);
         ballHUD.components.MeshComponent.setColor(0,1,0,1);
         ballHUD.scale(0.5,0.5,0.5);
+        ballHUD.translate(0.2, 0, 0);
         ballHUD.build(gl);
         ballHUD.setParent(system);
         this.environment.addNode(ballHUD);
@@ -143,7 +144,7 @@ define('Game', ["BaseGame", "Environment", "Skybox", "Shaders", "Node", "Cube", 
         scoreHUD.setText("TARGETS HIT - " + score);
         scoreHUD.components.MeshComponent.setColor(0,1,0,1);
         scoreHUD.scale(0.5,0.5,0.5);
-        scoreHUD.translate(0, -0.05, 0);
+        scoreHUD.translate(0.2, -0.05, 0);
         scoreHUD.build(gl);
         scoreHUD.setParent(system);
         this.environment.addNode(scoreHUD);
