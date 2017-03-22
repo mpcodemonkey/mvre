@@ -1,6 +1,9 @@
 // cuon-utils.js (c) 2012 kanda and matsuda
 // modified by Jonathan Tinney to include extra helper functions provided in the WebGl programming guide
 
+
+//create a texture array, will need for optimization
+var texArray = [];
 /**
  * Create a program object and make current
  * @param gl GL context
@@ -106,8 +109,10 @@ function initBuffer(gl) {
 }
 
 function initTexture(gl, imgSrc){
+  if(texArray[imgSrc] !== undefined){
+    return texArray[imgSrc];
+  }
   var preparedTexture = gl.createTexture();
-
   /**
    * this is a fix for textures not loading immediately at runtime. Basically,
    * a placeholder 1x1 texture is created as a stand-in until the proper texture
@@ -121,6 +126,7 @@ function initTexture(gl, imgSrc){
   preparedTexture.image.onload = function() { handleTextureLoaded(gl, preparedTexture); }
   preparedTexture.image.src = imgSrc;
 
+  texArray[imgSrc] = preparedTexture;
   return preparedTexture;
 }
 
